@@ -66,3 +66,7 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+#canvas {
+  border: 2px solid red;
+}
