@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 
 import './App.css'
 
+// https://www.kirupa.com/canvas/mouse_follow_ease.htm
 function App() {
   const orcaImageUrls = [...Array(45).keys()]
     .map(x => ++x)
