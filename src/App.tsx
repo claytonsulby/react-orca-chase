@@ -83,6 +83,9 @@ function App() {
       canvas.height
     );
 
+    mousePositions.push({x: mouseX, y: mouseY});
+    mousePositions.shift();
+
     renderOrcaPos(ctx, orcaXPos, orcaYPos);
    
     requestAnimationFrame(animate);
@@ -162,9 +165,6 @@ function App() {
   function setMousePosition(event: MouseEvent) {
     mouseX = event.clientX - canvasPosition.x;
     mouseY = event.clientY - canvasPosition.y;
-
-    mousePositions.push({x: mouseX, y: mouseY});
-    mousePositions.shift();
   }
 
   function updatePosition() {
