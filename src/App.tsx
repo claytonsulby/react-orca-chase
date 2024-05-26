@@ -66,12 +66,32 @@ function App() {
   function animate() {
     xDelta = mouseX - orcaXPos;
     yDelta = mouseY - orcaYPos;
+
+    const distance = Math.sqrt(((xDelta*xDelta) + (yDelta*yDelta)))
+
+    // The list is the last 44 places the mouse was. Here, it calculates the distance
+    // to its assigned spot (layer 3 to x 3, etc.) If the distance is greater than 15,
+    // it moves 7 steps. If it's between 15 and 1, it moves 1/3 of the distance to its point.
+    // And if the distance is 1 it goes straight to its point.
+    let distanceToMoveX = ORCA_X_DEACCELERATION;
+    let distanceToMoveY = ORCA_Y_DEACCELERATION;
+
+    // if (distance >= 15) {
+    //   distanceToMoveX = 0.07;
+    //   distanceToMoveY = 0.07;
+    // } else if (distance > 1 && distance < 15) {
+    //   distanceToMoveX = 0.3333333;
+    //   distanceToMoveY = 0.3333333;
+    // } else {
+    //   distanceToMoveX = 1;
+    //   distanceToMoveY = 1; 
+    // }
    
     // For the orca to go straigh to the mouse we would increment by the delta.
     // For the orca to incrementally go toward the mouse we move by a fraction of the total distance.
     // In this case the orca moves by an increment of OCRA_X_DEACCELERATION
-    orcaXPos += (xDelta / ORCA_X_DEACCELERATION);
-    orcaYPos += (yDelta / ORCA_Y_DEACCELERATION);
+    orcaXPos += (xDelta / distanceToMoveX);
+    orcaYPos += (yDelta / distanceToMoveY);
  
     ctx.clearRect(0, 0, canvas.width, canvas.height);
    
@@ -83,7 +103,7 @@ function App() {
       canvas.height
     );
 
-    mousePositions.push({x: mouseX, y: mouseY});
+    mousePositions.push({x: orcaXPos, y: orcaYPos});
     mousePositions.shift();
 
     renderOrcaPos(ctx, orcaXPos, orcaYPos);
