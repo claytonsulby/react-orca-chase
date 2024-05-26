@@ -32,6 +32,8 @@ function App() {
   let xDelta = 0;
   let yDelta = 0;
 
+  const mousePositions: Point[] = [...Array(45)].fill({x: 0, y: 0});
+
   useEffect(() => {
     canvas = document.getElementById("canvas") as HTMLCanvasElement;
     ctx = canvas?.getContext("2d")!;
@@ -149,8 +151,8 @@ function App() {
       const imageWidth = orcaImage.img.naturalWidth * ORCA_SCALE;
       const imageHeight = orcaImage.img.naturalHeight * ORCA_SCALE;
       ctx.drawImage(orcaImage.img,
-        x - imageWidth / ORCA_X_MIDDLE,
-        y - imageHeight / ORCA_Y_MIDDLE,
+        mousePositions[index].x - imageWidth / ORCA_X_MIDDLE,
+        mousePositions[index].y - imageHeight / ORCA_Y_MIDDLE,
         imageWidth,
         imageHeight
       );
@@ -159,7 +161,10 @@ function App() {
  
   function setMousePosition(event: MouseEvent) {
     mouseX = event.clientX - canvasPosition.x;
-    mouseY = event.clientY - canvasPosition.y; 
+    mouseY = event.clientY - canvasPosition.y;
+
+    mousePositions.push({x: mouseX, y: mouseY});
+    mousePositions.shift();
   }
 
   function updatePosition() {
