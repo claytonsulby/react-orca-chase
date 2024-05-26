@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import './App.css'
 
@@ -12,19 +12,18 @@ const ORCA_X_DEACCELERATION = 40;
 const ORCA_Y_DEACCELERATION = 40;
 const ORCA_X_MIDDLE = 2;
 const ORCA_Y_MIDDLE = 1.7;
-const BORDER_WIDTH = 4;
+const BORDER_WIDTH = 2;
 
 // https://www.kirupa.com/canvas/mouse_follow_ease.htm
 function App() {
   const orcaImageUrls = [...Array(45).keys()]
     .map(x => ++x)
-    .map(x => "/orca/"+x+"-removebg-preview.png");
+    .map(x => "/orca/" + x + ".png");
   const orcaImages: {img: HTMLImageElement, id: number}[] = [];
 
-  let canvas: HTMLCanvasElement;
-  let ctx: CanvasRenderingContext2D;
+  const canvas = useRef<HTMLCanvasElement>(null);
+  const [canvasPosition, setCanvasPosition] = useState<Point>({x: 0, y: 0});
 
-  let canvasPosition: Point;
   let mouseX = 0;
   let mouseY = 0;
   let orcaXPos = 0;
@@ -32,49 +31,58 @@ function App() {
   let xDelta = 0;
   let yDelta = 0;
 
-  const mousePositions: Point[] = [...Array(45)].fill({x: 0, y: 0});
+  const mousePositions: Point[] = [...Array(45)];
 
-  useEffect(() => {
-    canvas = document.getElementById("canvas") as HTMLCanvasElement;
-    ctx = canvas?.getContext("2d")!;
-    
-    if (!ctx) {
-      alert("An error has occured :( \nPlease reload the site!")
+  useEffect(() => {    
+    if (!canvas.current) {
+      alert("An error has occured :( \nPlease reload the site!");
+
+      return;
     }
 
-    let sizeWidth = document.body.clientWidth - BORDER_WIDTH;
-    let sizeHeight = document.body.clientHeight - BORDER_WIDTH;
+    const ctx = canvas.current.getContext("2d");
 
-    //Setting the canvas site and width to be responsive 
-    canvas.width = sizeWidth;
-    canvas.height = sizeHeight;
+    if (!ctx) {
+      alert("An error has occured :( \nPlease reload the site!");
+
+      return;
+    }
+
+    const sizeWidth = canvasSize().x;
+    const sizeHeight = canvasSize().y;
+
+    canvas.current.width = sizeWidth;
+    canvas.current.height = sizeHeight;
+
+    // Start by rendering the whale in the middle of the screen
+    mousePositions.fill({x: sizeWidth / 2, y: sizeHeight / 2});
+
+    mouseX = sizeWidth / 2;
+    mouseY = sizeHeight / 2;
+    orcaXPos = sizeWidth / 2;
+    orcaYPos =  sizeHeight / 2;
+
+    setCanvasPosition(getPosition());
     
-    canvasPosition = getPosition(canvas);
-
-      
-    loadOrcaImages();
-
-    canvas.addEventListener("mousemove", setMousePosition, false);
-
-    window.addEventListener("scroll", updatePosition, false);
+    canvas.current!.addEventListener("mousemove", setMousePosition, false);
+    // window.addEventListener("scroll", updatePosition, false);
     window.addEventListener("resize", updatePosition, false);
 
-    animate();
+    animate(ctx);
   }, []);
 
-  // This function will be called 60 times a second
-  function animate() {
+  function animate(ctx: CanvasRenderingContext2D) {
     xDelta = mouseX - orcaXPos;
     yDelta = mouseY - orcaYPos;
 
-    const distance = Math.sqrt(((xDelta*xDelta) + (yDelta*yDelta)))
+    // const distance = Math.sqrt(((xDelta*xDelta) + (yDelta*yDelta)))
 
     // The list is the last 44 places the mouse was. Here, it calculates the distance
     // to its assigned spot (layer 3 to x 3, etc.) If the distance is greater than 15,
     // it moves 7 steps. If it's between 15 and 1, it moves 1/3 of the distance to its point.
     // And if the distance is 1 it goes straight to its point.
-    let distanceToMoveX = ORCA_X_DEACCELERATION;
-    let distanceToMoveY = ORCA_Y_DEACCELERATION;
+    const distanceToMoveX = ORCA_X_DEACCELERATION;
+    const distanceToMoveY = ORCA_Y_DEACCELERATION;
 
     // if (distance >= 15) {
     //   distanceToMoveX = 0.07;
@@ -92,45 +100,26 @@ function App() {
     // In this case the orca moves by an increment of OCRA_X_DEACCELERATION
     orcaXPos += (xDelta / distanceToMoveX);
     orcaYPos += (yDelta / distanceToMoveY);
- 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-   
-    ctx.fillStyle = "white";
-    ctx.fillRect(
+    
+    ctx!.fillStyle = "white";
+    ctx!.fillRect(
       0,
       0,
-      canvas.width,
-      canvas.height
+      canvas.current!.width,
+      canvas.current!.height
     );
 
     mousePositions.push({x: orcaXPos, y: orcaYPos});
     mousePositions.shift();
 
-    renderOrcaPos(ctx, orcaXPos, orcaYPos);
+    renderOrcaPos(ctx);
    
-    requestAnimationFrame(animate);
+    requestAnimationFrame(() => animate(ctx));
   }
 
-  function getPosition(canvasElement: HTMLCanvasElement): Point{
-    let xPos = 0;
-    let yPos = 0;
-   
-    while (canvasElement) {
-      if (canvasElement.tagName == "BODY") {
-        // deal with browser quirks with body/window/document and page scroll
-        let xScroll = canvasElement.scrollLeft || document.documentElement.scrollLeft;
-        let yScroll = canvasElement.scrollTop || document.documentElement.scrollTop;
-   
-        xPos += (canvasElement.offsetLeft - xScroll + canvasElement.clientLeft);
-        yPos += (canvasElement.offsetTop - yScroll + canvasElement.clientTop);
-      } else {
-        // for all other non-BOyDelta elements
-        xPos += (canvasElement.offsetLeft - canvasElement.scrollLeft + canvasElement.clientLeft);
-        yPos += (canvasElement.offsetTop - canvasElement.scrollTop + canvasElement.clientTop);
-      }
-   
-      canvasElement = canvasElement.offsetParent as HTMLCanvasElement;
-    }
+  function getPosition(): Point{
+    const xPos = 0;
+    const yPos = 0;
 
     return {
       x: xPos,
@@ -144,20 +133,32 @@ function App() {
       
       image.src = url;
   
-      image.onload = (ev: Event) => {
-        orcaImages.push({img: ev.target as HTMLImageElement, id: Number.parseInt(url.split(".")[0].split("/")[2])})
+      // Orca images are named 1.png - 44.png etc from the nose to the tail of the orca
+      const imageLayer = url.split(".")[0];
 
-        if (orcaImages.length == orcaImageUrls.length - 1) {
-          orcaImages.sort((a, b) => {
-            if (a.id > b.id) {
-              return -1
-            } else {
-              return 1;
-            }
-          });
+      image.onload = (event: Event) => {
+        orcaImages.push({
+          img: event.target as HTMLImageElement,
+          id: Number.parseInt(imageLayer)
+        })
+
+        const allImagesLoaded = orcaImages.length == orcaImageUrls.length - 1;
+
+        if (allImagesLoaded) {
+          sortOrcaImagesNoseFirst();
         }
       }
     })
+  }
+
+  const sortOrcaImagesNoseFirst = () => {
+    orcaImages.sort((a, b) => {
+      if (a.id > b.id) {
+        return 1
+      } else {
+        return -1;
+      }
+    });
   }
 
   // This method is called 60 times a second and renders the entire orca. Currently
@@ -169,10 +170,11 @@ function App() {
   // and the incremental updates stagger throughout the array
   // 2. Store last 44 positions of the mouse and render each layer at that position?
   // 3. Set an interval and render each layer on a 250ms delay
-  const renderOrcaPos = (ctx: CanvasRenderingContext2D, x: number, y: number) => {
+  const renderOrcaPos = (ctx: CanvasRenderingContext2D) => {
     orcaImages.forEach((orcaImage, index) => {
       const imageWidth = orcaImage.img.naturalWidth * ORCA_SCALE;
       const imageHeight = orcaImage.img.naturalHeight * ORCA_SCALE;
+
       ctx.drawImage(orcaImage.img,
         mousePositions[index].x - imageWidth / ORCA_X_MIDDLE,
         mousePositions[index].y - imageHeight / ORCA_Y_MIDDLE,
@@ -188,12 +190,24 @@ function App() {
   }
 
   function updatePosition() {
-    canvasPosition = getPosition(canvas);
+    setCanvasPosition(getPosition());
+
+    canvas.current!.width = canvasSize().x;
+    canvas.current!.height = canvasSize().y;
   }
+
+  const canvasSize = (): Point => {
+    return {
+      x: document.body.clientWidth - BORDER_WIDTH * 2,
+      y: document.body.clientHeight - BORDER_WIDTH * 2
+    }
+  }
+
+  loadOrcaImages();
 
   return (
     <>
-      <canvas id="canvas"></canvas>
+      <canvas id="canvas" ref={canvas}></canvas>
     </>
   )
 }
