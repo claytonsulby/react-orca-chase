@@ -140,7 +140,9 @@ function App() {
   // the different layers of the orca to move one at a time with a slight delay
 
   // Possible approaches
-  // 1. I have no ideag
+  // 1. Array of 44 items for each layer where each layer renders at that position
+  // and the incremental updates stagger throughout the array
+  // 2. 
   const renderOrcaPos = (ctx: CanvasRenderingContext2D, x: number, y: number) => {
     orcaImages.forEach((orcaImage, index) => {
       const imageWidth = orcaImage.img.naturalWidth * ORCA_SCALE;
