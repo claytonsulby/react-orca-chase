@@ -10,6 +10,9 @@ type Point = {
 const ORCA_SCALE = 1;
 const ORCA_X_DEACCELERATION = 40;
 const ORCA_Y_DEACCELERATION = 40;
+const ORCA_X_MIDDLE = 2;
+const ORCA_Y_MIDDLE = 1.7;
+const BORDER_WIDTH = 4;
 
 // https://www.kirupa.com/canvas/mouse_follow_ease.htm
 function App() {
@@ -26,8 +29,8 @@ function App() {
   let mouseY = 0;
   let orcaXPos = 0;
   let orcaYPos = 0;
-  let dX = 0;
-  let dY = 0;
+  let xDelta = 0;
+  let yDelta = 0;
 
   useEffect(() => {
     canvas = document.getElementById("canvas") as HTMLCanvasElement;
@@ -37,8 +40,8 @@ function App() {
       alert("An error has occured :( \nPlease reload the site!")
     }
 
-    let sizeWidth = 100 * window.innerWidth / 100;
-    let sizeHeight = 100 * window.innerHeight / 100 || 766;
+    let sizeWidth = document.body.clientWidth - BORDER_WIDTH;
+    let sizeHeight = document.body.clientHeight - BORDER_WIDTH;
 
     //Setting the canvas site and width to be responsive 
     canvas.width = sizeWidth;
@@ -57,12 +60,16 @@ function App() {
     animate();
   }, []);
 
+  // This function will be called 60 times a second
   function animate() {
-    dX = mouseX - orcaXPos;
-    dY = mouseY - orcaYPos;
+    xDelta = mouseX - orcaXPos;
+    yDelta = mouseY - orcaYPos;
    
-    orcaXPos += (dX / ORCA_X_DEACCELERATION);
-    orcaYPos += (dY / ORCA_Y_DEACCELERATION);
+    // For the orca to go straigh to the mouse we would increment by the delta.
+    // For the orca to incrementally go toward the mouse we move by a fraction of the total distance.
+    // In this case the orca moves by an increment of OCRA_X_DEACCELERATION
+    orcaXPos += (xDelta / ORCA_X_DEACCELERATION);
+    orcaYPos += (yDelta / ORCA_Y_DEACCELERATION);
  
     ctx.clearRect(0, 0, canvas.width, canvas.height);
    
@@ -92,7 +99,7 @@ function App() {
         xPos += (canvasElement.offsetLeft - xScroll + canvasElement.clientLeft);
         yPos += (canvasElement.offsetTop - yScroll + canvasElement.clientTop);
       } else {
-        // for all other non-BODY elements
+        // for all other non-BOyDelta elements
         xPos += (canvasElement.offsetLeft - canvasElement.scrollLeft + canvasElement.clientLeft);
         yPos += (canvasElement.offsetTop - canvasElement.scrollTop + canvasElement.clientTop);
       }
@@ -133,8 +140,8 @@ function App() {
       const imageWidth = orcaImage.img.naturalWidth * ORCA_SCALE;
       const imageHeight = orcaImage.img.naturalHeight * ORCA_SCALE;
       ctx.drawImage(orcaImage.img,
-        x - imageWidth / 2,
-        y - imageHeight / 2,
+        x - imageWidth / ORCA_X_MIDDLE,
+        y - imageHeight / ORCA_Y_MIDDLE,
         imageWidth,
         imageHeight
       );
