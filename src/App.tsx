@@ -207,7 +207,9 @@ function App() {
 
   return (
     <>
-      <canvas id="canvas" ref={canvas}></canvas>
+      <canvas id="canvas" ref={canvas}>
+        Canvas not supported. Please use a more modern different browser.
+      </canvas>
     </>
   )
 }
