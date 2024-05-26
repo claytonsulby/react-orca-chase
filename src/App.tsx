@@ -135,6 +135,12 @@ function App() {
     })
   }
 
+  // This method is called 60 times a second and renders the entire orca. Currently
+  // the entire orca travels toward the mouse in small increments. What we want is for the
+  // the different layers of the orca to move one at a time with a slight delay
+
+  // Possible approaches
+  // 1. I have no ideag
   const renderOrcaPos = (ctx: CanvasRenderingContext2D, x: number, y: number) => {
     orcaImages.forEach((orcaImage, index) => {
       const imageWidth = orcaImage.img.naturalWidth * ORCA_SCALE;
