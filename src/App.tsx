@@ -142,7 +142,8 @@ function App() {
   // Possible approaches
   // 1. Array of 44 items for each layer where each layer renders at that position
   // and the incremental updates stagger throughout the array
-  // 2. 
+  // 2. Store last 44 positions of the mouse and render each layer at that position?
+  // 3. Set an interval and render each layer on a 250ms delay
   const renderOrcaPos = (ctx: CanvasRenderingContext2D, x: number, y: number) => {
     orcaImages.forEach((orcaImage, index) => {
       const imageWidth = orcaImage.img.naturalWidth * ORCA_SCALE;
