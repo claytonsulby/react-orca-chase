@@ -17,6 +17,11 @@ A website where a orca follows your mouse
 - Fix linting issues with `npm run lint -- --fix`
 - Type check with `npm run tsc`
 
+## Technical breakdown
+~Explanation to how the orca is rendered~
+
+## Inspiration
+Special thanks to [NickyNouse](https://scratch.mit.edu/users/NickyNouse/) whoose original [whale game](https://scratch.mit.edu/projects/16795490/) on scratch inspired this project.
 ## React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
