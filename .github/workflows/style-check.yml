@@ -22,3 +22,7 @@ jobs:
       - name: Run eslint
         if: ${{ success() }}
         run: npm run lint
+
+      - name: Run prettier
+        if: ${{ success() }}
+        run: npm run format
