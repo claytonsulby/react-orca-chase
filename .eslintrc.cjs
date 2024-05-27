@@ -17,6 +17,7 @@ module.exports = {
       'warn',
       { allowConstantExport: true },
     ],
+    "object-curly-spacing": ["error", "always"],
   },
   parserOptions: {
     ecmaVersion: "latest",
