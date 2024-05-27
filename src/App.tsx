@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 
 import './App.css'
 
-type Point = {
+interface Point {
   x: number;
   y: number;
 }
@@ -31,7 +31,10 @@ function App() {
   let xDelta = 0;
   let yDelta = 0;
 
-  const mousePositions: Point[] = [...Array(45)];
+  const mousePositions: Point[] = [...Array(45).keys()]
+    .map(() => {
+      return { x: 0, y: 0 }
+    });
 
   useEffect(() => {    
     if (!canvas.current) {
@@ -64,7 +67,7 @@ function App() {
 
     setCanvasPosition(getPosition());
     
-    canvas.current!.addEventListener("mousemove", setMousePosition, false);
+    canvas.current.addEventListener("mousemove", setMousePosition, false);
     // window.addEventListener("scroll", updatePosition, false);
     window.addEventListener("resize", updatePosition, false);
 
@@ -101,8 +104,8 @@ function App() {
     orcaXPos += (xDelta / distanceToMoveX);
     orcaYPos += (yDelta / distanceToMoveY);
     
-    ctx!.fillStyle = "white";
-    ctx!.fillRect(
+    ctx.fillStyle = "white";
+    ctx.fillRect(
       0,
       0,
       canvas.current!.width,
