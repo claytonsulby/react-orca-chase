@@ -11,5 +11,5 @@ export const ORCA_Y_MIDDLE = 1.7;
 export const BORDER_WIDTH = 2;
 
 export const ORCA_IMAGE_URLS = [...Array(44).keys()]
-      .map(x => ++x)
-      .map(x => "/orca/" + x + ".png");
+  .map((x) => ++x)
+  .map((x) => "/orca/" + x + ".png");
