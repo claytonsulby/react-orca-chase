@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { Helmet } from "react-helmet";
 
 import { loadOrcaLayers, sortOrcaLayersTailFirst } from './orcaActions';
 import { 
@@ -133,6 +134,14 @@ function App() {
 
   return (
     <>
+      <Helmet>
+        <script 
+          defer
+          src={import.meta.env.VITE_UMAMI_WEBSITE_URL}
+          data-website-id={import.meta.env.VITE_UMAMI_WEBSITE_ID}>
+        </script>
+      </Helmet>
+      
       <canvas id="canvas" ref={canvas}>
         Canvas not supported. Please use a more modern different browser.
       </canvas>
