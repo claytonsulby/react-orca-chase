@@ -1,6 +1,22 @@
 # 🐋 [orca-chase](https://orcachase.com/)
 A website where a orca follows your mouse
 
+![](https://img.shields.io/github/actions/workflow/status/hiccup246/jameswatt/style-check.yml?branch=main&label=Style%20Check)
+
+![](https://img.shields.io/github/license/Hiccup246/jameswatt)
+![](https://img.shields.io/github/languages/code-size/Hiccup246/jameswatt)
+
+
+## Installation + Usage
+1. Install node version found in `.nvmrc`
+2. Install dependancies with `npm install`
+3. Run the project with `npm run dev`
+
+### Other Commands
+- Lint project with `npm run lint`
+- Fix linting issues with `npm run lint -- --fix`
+- Type check with `npm run tsc`
+
 ## React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
