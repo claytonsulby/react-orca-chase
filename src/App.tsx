@@ -137,7 +137,9 @@ function App() {
       <Helmet>
         <script 
           defer
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           src={import.meta.env.VITE_UMAMI_WEBSITE_URL}
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           data-website-id={import.meta.env.VITE_UMAMI_WEBSITE_ID}>
         </script>
       </Helmet>
