@@ -1,4 +1,10 @@
-# 🐋 [orca-chase](https://orcachase.com/)
+<style>
+  .orca-logo {
+    vertical-align: bottom;
+  }
+</style>
+
+# <img class="orca-logo" src="https://raw.githubusercontent.com/Hiccup246/orca-chase/main/public/orca.png" width="35" height="35" alt="site-screenshot"> [orca-chase](https://orcachase.com/)
 A website where an orca follows your mouse
 
 ![](https://img.shields.io/github/actions/workflow/status/hiccup246/orca-chase/style-check.yml?branch=main&label=Style%20Check)
