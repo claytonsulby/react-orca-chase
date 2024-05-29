@@ -108,8 +108,8 @@ function App() {
 
   const canvasSize = (): Point => {
     return {
-      x: document.body.clientWidth - BORDER_WIDTH * 2,
-      y: document.body.clientHeight - BORDER_WIDTH * 2,
+      x: window.innerWidth - BORDER_WIDTH * 2,
+      y: window.innerHeight - BORDER_WIDTH * 2,
     };
   };
 
