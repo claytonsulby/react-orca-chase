@@ -4,11 +4,15 @@ import { Helmet } from "react-helmet";
 import { loadOrcaLayers, sortOrcaLayersTailFirst } from "./orcaActions";
 import {
   BORDER_WIDTH,
+  FPS,
+  LONG_TRAVEL_DISTANCE,
+  MAX_TRAVEL_DISTANCE,
   ORCA_SCALE,
   ORCA_X_DEACCELERATION,
   ORCA_X_MIDDLE,
   ORCA_Y_DEACCELERATION,
   ORCA_Y_MIDDLE,
+  SHORT_DISTANCE_MULTIPLIER,
 } from "./constants";
 import "./App.css";
 
@@ -27,6 +31,11 @@ function App() {
   let orcaYPos = 0;
   let xDelta = 0;
   let yDelta = 0;
+
+  let now;
+  let then = Date.now();
+  const interval = 1000 / FPS;
+  let delta;
 
   useEffect(() => {
     if (!canvas.current) {
@@ -77,15 +86,25 @@ function App() {
     orcaYPos = sizeHeight / 2;
   };
 
-  function setMousePosition(event: MouseEvent) {
+  const setMousePosition = (event: MouseEvent) => {
     mouseX = event.clientX - canvasPosition.x;
     mouseY = event.clientY - canvasPosition.y;
-  }
+  };
 
-  function updatePosition() {
+  const updatePosition = () => {
     canvas.current!.width = canvasSize().x;
     canvas.current!.height = canvasSize().y;
-  }
+  };
+
+  const pointFromAngleDistance = (distance: number, radians: number): Point => {
+    const x = distance * Math.cos(radians);
+    const y = distance * Math.sin(radians);
+
+    return {
+      x,
+      y,
+    };
+  };
 
   const canvasSize = (): Point => {
     return {
@@ -95,22 +114,43 @@ function App() {
   };
 
   function animate(ctx: CanvasRenderingContext2D) {
-    xDelta = mouseX - orcaXPos;
-    yDelta = mouseY - orcaYPos;
+    now = Date.now();
+    delta = now - then;
 
-    const distanceToMoveX = ORCA_X_DEACCELERATION;
-    const distanceToMoveY = ORCA_Y_DEACCELERATION;
+    const timeToRender = delta > interval;
+    if (timeToRender) {
+      then = now - (delta % interval);
 
-    // For the orca to go straight to the mouse we increment by the delta.
-    // For the orca to incrementally go toward the mouse we increment by a fraction of the delta.
-    orcaXPos += xDelta / distanceToMoveX;
-    orcaYPos += yDelta / distanceToMoveY;
+      xDelta = mouseX - orcaXPos;
+      yDelta = mouseY - orcaYPos;
 
-    ctx.fillStyle = "white";
-    ctx.fillRect(0, 0, canvas.current!.width, canvas.current!.height);
+      const distanceToMoveX = ORCA_X_DEACCELERATION;
+      const distanceToMoveY = ORCA_Y_DEACCELERATION;
 
-    mousePositions.push({ x: orcaXPos, y: orcaYPos });
-    mousePositions.shift();
+      const theta_radians = Math.atan2(mouseY - orcaYPos, mouseX - orcaXPos);
+      const distance = Math.sqrt(xDelta * xDelta + yDelta * yDelta);
+
+      if (distance > LONG_TRAVEL_DISTANCE) {
+        const p = pointFromAngleDistance(MAX_TRAVEL_DISTANCE, theta_radians);
+
+        orcaXPos += p.x / distanceToMoveX;
+        orcaYPos += p.y / distanceToMoveY;
+      } else {
+        const p = pointFromAngleDistance(
+          distance * SHORT_DISTANCE_MULTIPLIER,
+          theta_radians
+        );
+
+        orcaXPos += p.x / distanceToMoveX;
+        orcaYPos += p.y / distanceToMoveY;
+      }
+
+      mousePositions.push({ x: orcaXPos, y: orcaYPos });
+      mousePositions.shift();
+
+      ctx.fillStyle = "white";
+      ctx.fillRect(0, 0, canvas.current!.width, canvas.current!.height);
+    }
 
     renderOrca(ctx);
 
