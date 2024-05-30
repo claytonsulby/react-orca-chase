@@ -1,6 +1,5 @@
 import {
   MAX_ACCEPTABLE_TRAVEL_DISTANCE,
-  MAX_LAYER_TRAVEL_DISTANCE,
   MIN_ACCEPTABLE_TRAVEL_DISTANCE,
   MIN_LAYER_TRAVEL_DISTANCE,
   ORCA_IMAGE_URLS,
@@ -60,7 +59,8 @@ export const sortOrcaLayersTailFirst = (layers: OrcaLayer[]) => {
  */
 export const calcNextOrcaPosition = (
   mousePosition: Point,
-  orcaPosition: Point
+  orcaPosition: Point,
+  maxLayerTravelDistance: number
 ): Point => {
   const xDelta = mousePosition.x - orcaPosition.x;
   const yDelta = mousePosition.y - orcaPosition.y;
@@ -72,7 +72,7 @@ export const calcNextOrcaPosition = (
 
   if (distanceBetweenOrcaAndMouse > MAX_ACCEPTABLE_TRAVEL_DISTANCE) {
     const { x, y } = pointFromAngleDistance(
-      MAX_LAYER_TRAVEL_DISTANCE,
+      maxLayerTravelDistance,
       radiansBetweenOrcaAndMouse
     );
 

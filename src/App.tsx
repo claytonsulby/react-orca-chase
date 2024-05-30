@@ -10,11 +10,14 @@ import {
   BORDER_WIDTH,
   DEFAULT_ORCA_SCALE,
   FPS_INTERVAL,
+  MAX_LAYER_TRAVEL_DISTANCE,
+  MAX_LAYER_TRAVEL_DISTANCE_SMALL_SCREEN,
   MEDIUM_ORCA_SCALE,
   MEDIUM_SCREEN_WIDTH,
   ORCA_X_MIDDLE,
   ORCA_Y_MIDDLE,
   SMALL_ORCA_SCALE,
+  SMALL_SCREEN_WIDTH,
 } from "./constants";
 import "./App.css";
 
@@ -32,6 +35,8 @@ function App() {
   let mouseY = 0;
   let orcaXPos = 0;
   let orcaYPos = 0;
+
+  let maxLayerTravelDistance = MAX_LAYER_TRAVEL_DISTANCE;
 
   let then = Date.now();
 
@@ -54,6 +59,7 @@ function App() {
     canvas.current.height = canvasSize().y;
 
     setupMouseAndOcraPositions();
+    setMaxOrcaTravelDistance();
 
     canvas.current.addEventListener("mousemove", setMousePosition, false);
     canvas.current.addEventListener("touchmove", setTouchPosition, false);
@@ -74,19 +80,29 @@ function App() {
 
   const calcOrcaScale = (): number => {
     if (
+      window.matchMedia(`screen and (max-width: ${SMALL_SCREEN_WIDTH}px)`)
+        .matches
+    ) {
+      return SMALL_ORCA_SCALE;
+    }
+
+    if (
       window.matchMedia(`screen and (max-width: ${MEDIUM_SCREEN_WIDTH}px)`)
         .matches
     ) {
       return MEDIUM_ORCA_SCALE;
     }
 
-    if (
-      window.matchMedia(`screen and (max-width: ${SMALL_ORCA_SCALE}px)`).matches
-    ) {
-      return SMALL_ORCA_SCALE;
-    }
-
     return DEFAULT_ORCA_SCALE;
+  };
+
+  const setMaxOrcaTravelDistance = () => {
+    if (
+      window.matchMedia(`screen and (max-width: ${SMALL_SCREEN_WIDTH}px)`)
+        .matches
+    ) {
+      maxLayerTravelDistance = MAX_LAYER_TRAVEL_DISTANCE_SMALL_SCREEN;
+    }
   };
 
   const setupMouseAndOcraPositions = () => {
@@ -136,7 +152,8 @@ function App() {
 
       const newOrcaPosition = calcNextOrcaPosition(
         { x: mouseX, y: mouseY },
-        { x: orcaXPos, y: orcaYPos }
+        { x: orcaXPos, y: orcaYPos },
+        maxLayerTravelDistance
       );
 
       orcaXPos += newOrcaPosition.x;
