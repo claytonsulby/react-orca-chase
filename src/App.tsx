@@ -23,6 +23,7 @@ import "./App.css";
 function App() {
   const canvas = useRef<HTMLCanvasElement>(null);
   const canvasPosition = { x: 0, y: 0 };
+
   const mousePositions: Point[] = [...Array(44).keys()].map(() => {
     return { x: 0, y: 0 };
   });
@@ -57,7 +58,7 @@ function App() {
     canvas.current.width = canvasSize().x;
     canvas.current.height = canvasSize().y;
 
-    setupPositionData();
+    setupMouseAndOcraPositions();
 
     canvas.current.addEventListener("mousemove", setMousePosition, false);
     canvas.current.addEventListener("touchmove", setTouchPosition, false);
@@ -133,7 +134,7 @@ function App() {
     };
   };
 
-  const setupPositionData = () => {
+  const setupMouseAndOcraPositions = () => {
     const sizeWidth = canvasSize().x;
     const sizeHeight = canvasSize().y;
 
