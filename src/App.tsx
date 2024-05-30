@@ -4,16 +4,19 @@ import { Helmet } from "react-helmet";
 import { loadOrcaLayers, sortOrcaLayersTailFirst } from "./orcaActions";
 import {
   BORDER_WIDTH,
+  DEFAULT_ORCA_SCALE,
   FPS,
   LONG_TRAVEL_DISTANCE,
   MAX_TRAVEL_DISTANCE,
+  MEDIUM_ORCA_SCALE,
+  MEDIUM_SCREEN_WIDTH,
   MIN_TRAVEL_DISTANCE,
-  ORCA_SCALE,
   ORCA_X_DEACCELERATION,
   ORCA_X_MIDDLE,
   ORCA_Y_DEACCELERATION,
   ORCA_Y_MIDDLE,
   SHORT_TRAVEL_DISTANCE,
+  SMALL_ORCA_SCALE,
 } from "./constants";
 import "./App.css";
 
@@ -63,7 +66,7 @@ function App() {
     window.addEventListener("scroll", updatePosition, false);
     window.addEventListener("resize", updatePosition, false);
 
-    loadOrcaLayers()
+    loadOrcaLayers(calcOrcaScale())
       .then((layers) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
         orcaLayers = layers;
@@ -74,6 +77,23 @@ function App() {
         alert("Failed to load orca :(\nPlease reload the site!");
       });
   }, []);
+
+  const calcOrcaScale = (): number => {
+    if (
+      window.matchMedia(`screen and (max-width: ${MEDIUM_SCREEN_WIDTH}px)`)
+        .matches
+    ) {
+      return MEDIUM_ORCA_SCALE;
+    }
+
+    if (
+      window.matchMedia(`screen and (max-width: ${SMALL_ORCA_SCALE}px)`).matches
+    ) {
+      return SMALL_ORCA_SCALE;
+    }
+
+    return DEFAULT_ORCA_SCALE;
+  };
 
   const setupPositionData = () => {
     const sizeWidth = canvasSize().x;
@@ -166,8 +186,8 @@ function App() {
 
   const renderOrca = (ctx: CanvasRenderingContext2D) => {
     orcaLayers.forEach((layer, index) => {
-      const imageWidth = layer.img.naturalWidth * ORCA_SCALE;
-      const imageHeight = layer.img.naturalHeight * ORCA_SCALE;
+      const imageWidth = layer.img.width;
+      const imageHeight = layer.img.height;
 
       ctx.drawImage(
         layer.img,

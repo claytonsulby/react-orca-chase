@@ -1,12 +1,17 @@
 import { ORCA_IMAGE_URLS } from "./constants";
 
-export const loadOrcaLayers = (): Promise<OrcaLayer[]> => {
+export const loadOrcaLayers = (imageScale: number): Promise<OrcaLayer[]> => {
   const orcaImages = ORCA_IMAGE_URLS.map(() => new Image());
 
   const loadingPromises: Promise<OrcaLayer>[] = orcaImages.map(
     (image, index) => {
       return new Promise<OrcaLayer>((res, rej) => {
-        image.onload = () => res({ img: image, id: index });
+        image.onload = () => {
+          image.width = image.naturalWidth * imageScale;
+          image.height = image.naturalHeight * imageScale;
+
+          res({ img: image, id: index });
+        };
         image.onerror = () => rej({ img: image, id: index });
       });
     }
