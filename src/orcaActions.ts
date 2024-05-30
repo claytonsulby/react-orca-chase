@@ -8,6 +8,12 @@ import {
   SHORT_TRAVEL_DISTANCE,
 } from "./constants";
 
+/** Loads all orca images and scales them. All the images will load and the function promise
+ * will resolve, or, a image will fail to load and the function promise will reject.
+ *
+ * @param imageScale
+ * @returns
+ */
 export const loadOrcaLayers = (imageScale: number): Promise<OrcaLayer[]> => {
   const orcaImages = ORCA_IMAGE_URLS.map(() => new Image());
 
@@ -32,7 +38,10 @@ export const loadOrcaLayers = (imageScale: number): Promise<OrcaLayer[]> => {
   return Promise.all(loadingPromises);
 };
 
-// assuming 1.png is nose
+/**
+ * Sorts the orca layers from tail to nose. Aassumes 1.png is the nose of the orca
+ * @param layers
+ */
 export const sortOrcaLayersTailFirst = (layers: OrcaLayer[]) => {
   layers.sort((a, b) => {
     if (a.id > b.id) {
@@ -43,6 +52,12 @@ export const sortOrcaLayersTailFirst = (layers: OrcaLayer[]) => {
   });
 };
 
+/**
+ * Calculate a x,y point given a distance and angle
+ * @param distance
+ * @param radians
+ * @returns
+ */
 export const pointFromAngleDistance = (
   distance: number,
   radians: number
@@ -56,6 +71,12 @@ export const pointFromAngleDistance = (
   };
 };
 
+/**
+ * Calculates the next position of the orca given the current mouse position and current orca position
+ * @param mousePosition
+ * @param orcaPosition
+ * @returns
+ */
 export const calcNextOrcaPosition = (
   mousePosition: Point,
   orcaPosition: Point
