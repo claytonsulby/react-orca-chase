@@ -1,21 +1,19 @@
 import { useEffect, useRef } from "react";
 import { Helmet } from "react-helmet";
 
-import { loadOrcaLayers, sortOrcaLayersTailFirst } from "./orcaActions";
+import {
+  calcNextOrcaPosition,
+  loadOrcaLayers,
+  sortOrcaLayersTailFirst,
+} from "./orcaActions";
 import {
   BORDER_WIDTH,
   DEFAULT_ORCA_SCALE,
   FPS,
-  LONG_TRAVEL_DISTANCE,
-  MAX_TRAVEL_DISTANCE,
   MEDIUM_ORCA_SCALE,
   MEDIUM_SCREEN_WIDTH,
-  MIN_TRAVEL_DISTANCE,
-  ORCA_X_DEACCELERATION,
   ORCA_X_MIDDLE,
-  ORCA_Y_DEACCELERATION,
   ORCA_Y_MIDDLE,
-  SHORT_TRAVEL_DISTANCE,
   SMALL_ORCA_SCALE,
 } from "./constants";
 import "./App.css";
@@ -94,46 +92,6 @@ function App() {
     return DEFAULT_ORCA_SCALE;
   };
 
-  const calcNextOrcaPosition = (
-    mousePosition: Point,
-    orcaPosition: Point
-  ): Point => {
-    const xDelta = mousePosition.x - orcaPosition.x;
-    const yDelta = mousePosition.y - orcaPosition.y;
-
-    const radiansBetweenOrcaAndMouse = Math.atan2(yDelta, xDelta);
-    const distanceBetweenOrcaAndMouse = Math.sqrt(
-      xDelta * xDelta + yDelta * yDelta
-    );
-
-    if (distanceBetweenOrcaAndMouse > LONG_TRAVEL_DISTANCE) {
-      const { x, y } = pointFromAngleDistance(
-        MAX_TRAVEL_DISTANCE,
-        radiansBetweenOrcaAndMouse
-      );
-
-      return {
-        x: x / ORCA_X_DEACCELERATION,
-        y: y / ORCA_Y_DEACCELERATION,
-      };
-    } else if (radiansBetweenOrcaAndMouse > SHORT_TRAVEL_DISTANCE) {
-      const { x, y } = pointFromAngleDistance(
-        MIN_TRAVEL_DISTANCE,
-        radiansBetweenOrcaAndMouse
-      );
-
-      return {
-        x: x / ORCA_X_DEACCELERATION,
-        y: y / ORCA_Y_DEACCELERATION,
-      };
-    }
-
-    return {
-      x: xDelta,
-      y: yDelta,
-    };
-  };
-
   const setupMouseAndOcraPositions = () => {
     const sizeWidth = canvasSize().x;
     const sizeHeight = canvasSize().y;
@@ -147,6 +105,18 @@ function App() {
     orcaYPos = sizeHeight / 2;
   };
 
+  const updatePosition = () => {
+    canvas.current!.width = canvasSize().x;
+    canvas.current!.height = canvasSize().y;
+  };
+
+  const canvasSize = (): Point => {
+    return {
+      x: window.innerWidth - BORDER_WIDTH * 2,
+      y: window.innerHeight - BORDER_WIDTH * 2,
+    };
+  };
+
   const setMousePosition = (event: MouseEvent) => {
     mouseX = event.clientX - canvasPosition.x;
     mouseY = event.clientY - canvasPosition.y;
@@ -155,28 +125,6 @@ function App() {
   const setTouchPosition = (event: TouchEvent) => {
     mouseX = event.targetTouches[0].clientX - canvasPosition.x;
     mouseY = event.targetTouches[0].clientY - canvasPosition.y;
-  };
-
-  const updatePosition = () => {
-    canvas.current!.width = canvasSize().x;
-    canvas.current!.height = canvasSize().y;
-  };
-
-  const pointFromAngleDistance = (distance: number, radians: number): Point => {
-    const x = distance * Math.cos(radians);
-    const y = distance * Math.sin(radians);
-
-    return {
-      x,
-      y,
-    };
-  };
-
-  const canvasSize = (): Point => {
-    return {
-      x: window.innerWidth - BORDER_WIDTH * 2,
-      y: window.innerHeight - BORDER_WIDTH * 2,
-    };
   };
 
   function animate(ctx: CanvasRenderingContext2D) {
