@@ -8,6 +8,7 @@ export const MAX_ACCEPTABLE_TRAVEL_DISTANCE = 15;
 export const MIN_ACCEPTABLE_TRAVEL_DISTANCE = 1;
 
 export const FPS = 35;
+export const FPS_INTERVAL = 1000 / FPS;
 
 export const SMALL_SCREEN_WIDTH = 425;
 export const MEDIUM_SCREEN_WIDTH = 640;

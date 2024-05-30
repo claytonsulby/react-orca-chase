@@ -9,7 +9,7 @@ import {
 import {
   BORDER_WIDTH,
   DEFAULT_ORCA_SCALE,
-  FPS,
+  FPS_INTERVAL,
   MEDIUM_ORCA_SCALE,
   MEDIUM_SCREEN_WIDTH,
   ORCA_X_MIDDLE,
@@ -33,10 +33,7 @@ function App() {
   let orcaXPos = 0;
   let orcaYPos = 0;
 
-  let now;
   let then = Date.now();
-  const interval = 1000 / FPS;
-  let delta;
 
   useEffect(() => {
     if (!canvas.current) {
@@ -128,12 +125,14 @@ function App() {
   };
 
   function animate(ctx: CanvasRenderingContext2D) {
-    now = Date.now();
-    delta = now - then;
+    const now = Date.now();
+    const elapsed = now - then;
 
-    const timeToRender = delta > interval;
+    const timeToRender = elapsed > FPS_INTERVAL;
     if (timeToRender) {
-      then = now - (delta % interval);
+      // Get ready for the next frame by setting then=now, but also adjust for the
+      // specified FPS_INTERVAL not being a multiple of RAF's interval (16.7ms)
+      then = now - (elapsed % FPS_INTERVAL);
 
       const orcaPosition = calcNextOrcaPosition(
         { x: mouseX, y: mouseY },
