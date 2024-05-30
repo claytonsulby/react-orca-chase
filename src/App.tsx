@@ -7,12 +7,13 @@ import {
   FPS,
   LONG_TRAVEL_DISTANCE,
   MAX_TRAVEL_DISTANCE,
+  MIN_TRAVEL_DISTANCE,
   ORCA_SCALE,
   ORCA_X_DEACCELERATION,
   ORCA_X_MIDDLE,
   ORCA_Y_DEACCELERATION,
   ORCA_Y_MIDDLE,
-  SHORT_DISTANCE_MULTIPLIER,
+  SHORT_TRAVEL_DISTANCE,
 } from "./constants";
 import "./App.css";
 
@@ -135,14 +136,14 @@ function App() {
 
         orcaXPos += p.x / distanceToMoveX;
         orcaYPos += p.y / distanceToMoveY;
-      } else {
-        const p = pointFromAngleDistance(
-          distance * SHORT_DISTANCE_MULTIPLIER,
-          theta_radians
-        );
+      } else if (distance > SHORT_TRAVEL_DISTANCE) {
+        const p = pointFromAngleDistance(MIN_TRAVEL_DISTANCE, theta_radians);
 
         orcaXPos += p.x / distanceToMoveX;
         orcaYPos += p.y / distanceToMoveY;
+      } else {
+        orcaXPos += xDelta;
+        orcaYPos += yDelta;
       }
 
       mousePositions.push({ x: orcaXPos, y: orcaYPos });
