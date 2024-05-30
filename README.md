@@ -28,6 +28,13 @@ The application renders these images starting from `44.png` to `1.png` onto a [H
 
 To make the orca move the application tracks the last 44 mouse positions, determines how far each layer should move toward the mouse, and re-renders the screen using [requestAnimationFrame](https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame).
 
+Additionally, the following variables change the orca behavior:
+
+- A higher fps makes the orca render more smoothly i.e. each layer will move with less delay
+- A larger max layer travel distance will lead to a more stretched orca
+- A larger max distance limit will lead to orca speed changing at different distances
+- Larger deacceleration values will make the orca move slowly
+
 ## Inspiration
 
 Special thanks to [NickyNouse](https://scratch.mit.edu/users/NickyNouse/) whose original [whale game](https://scratch.mit.edu/projects/16795490/) on scratch inspired this project.
