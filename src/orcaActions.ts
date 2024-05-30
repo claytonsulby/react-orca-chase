@@ -53,25 +53,6 @@ export const sortOrcaLayersTailFirst = (layers: OrcaLayer[]) => {
 };
 
 /**
- * Calculate a x,y point given a distance and angle
- * @param distance
- * @param radians
- * @returns
- */
-export const pointFromAngleDistance = (
-  distance: number,
-  radians: number
-): Point => {
-  const x = distance * Math.cos(radians);
-  const y = distance * Math.sin(radians);
-
-  return {
-    x,
-    y,
-  };
-};
-
-/**
  * Calculates the next position of the orca given the current mouse position and current orca position
  * @param mousePosition
  * @param orcaPosition
@@ -114,5 +95,24 @@ export const calcNextOrcaPosition = (
   return {
     x: xDelta,
     y: yDelta,
+  };
+};
+
+/**
+ * Calculate a x,y point given a distance and angle
+ * @param distance
+ * @param radians
+ * @returns
+ */
+export const pointFromAngleDistance = (
+  distance: number,
+  radians: number
+): Point => {
+  const x = distance * Math.cos(radians);
+  const y = distance * Math.sin(radians);
+
+  return {
+    x,
+    y,
   };
 };
