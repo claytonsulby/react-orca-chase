@@ -59,6 +59,7 @@ function App() {
     setupPositionData();
 
     canvas.current.addEventListener("mousemove", setMousePosition, false);
+    canvas.current.addEventListener("touchmove", setTouchPosition, false);
     window.addEventListener("scroll", updatePosition, false);
     window.addEventListener("resize", updatePosition, false);
 
@@ -90,6 +91,11 @@ function App() {
   const setMousePosition = (event: MouseEvent) => {
     mouseX = event.clientX - canvasPosition.x;
     mouseY = event.clientY - canvasPosition.y;
+  };
+
+  const setTouchPosition = (event: TouchEvent) => {
+    mouseX = event.targetTouches[0].clientX - canvasPosition.x;
+    mouseY = event.targetTouches[0].clientY - canvasPosition.y;
   };
 
   const updatePosition = () => {
