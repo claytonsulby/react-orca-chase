@@ -33,8 +33,6 @@ function App() {
   let mouseY = 0;
   let orcaXPos = 0;
   let orcaYPos = 0;
-  let xDelta = 0;
-  let yDelta = 0;
 
   let now;
   let then = Date.now();
@@ -95,6 +93,46 @@ function App() {
     return DEFAULT_ORCA_SCALE;
   };
 
+  const calcNextOrcaPosition = (
+    mousePosition: Point,
+    orcaPosition: Point
+  ): Point => {
+    const xDelta = mousePosition.x - orcaPosition.x;
+    const yDelta = mousePosition.y - orcaPosition.y;
+
+    const radiansBetweenOrcaAndMouse = Math.atan2(yDelta, xDelta);
+    const distanceBetweenOrcaAndMouse = Math.sqrt(
+      xDelta * xDelta + yDelta * yDelta
+    );
+
+    if (distanceBetweenOrcaAndMouse > LONG_TRAVEL_DISTANCE) {
+      const { x, y } = pointFromAngleDistance(
+        MAX_TRAVEL_DISTANCE,
+        radiansBetweenOrcaAndMouse
+      );
+
+      return {
+        x: x / ORCA_X_DEACCELERATION,
+        y: y / ORCA_Y_DEACCELERATION,
+      };
+    } else if (radiansBetweenOrcaAndMouse > SHORT_TRAVEL_DISTANCE) {
+      const { x, y } = pointFromAngleDistance(
+        MIN_TRAVEL_DISTANCE,
+        radiansBetweenOrcaAndMouse
+      );
+
+      return {
+        x: x / ORCA_X_DEACCELERATION,
+        y: y / ORCA_Y_DEACCELERATION,
+      };
+    }
+
+    return {
+      x: xDelta,
+      y: yDelta,
+    };
+  };
+
   const setupPositionData = () => {
     const sizeWidth = canvasSize().x;
     const sizeHeight = canvasSize().y;
@@ -148,31 +186,15 @@ function App() {
     if (timeToRender) {
       then = now - (delta % interval);
 
-      xDelta = mouseX - orcaXPos;
-      yDelta = mouseY - orcaYPos;
+      const orcaPosition = calcNextOrcaPosition(
+        { x: mouseX, y: mouseY },
+        { x: orcaXPos, y: orcaYPos }
+      );
 
-      const distanceToMoveX = ORCA_X_DEACCELERATION;
-      const distanceToMoveY = ORCA_Y_DEACCELERATION;
+      orcaXPos += orcaPosition.x;
+      orcaYPos += orcaPosition.y;
 
-      const theta_radians = Math.atan2(mouseY - orcaYPos, mouseX - orcaXPos);
-      const distance = Math.sqrt(xDelta * xDelta + yDelta * yDelta);
-
-      if (distance > LONG_TRAVEL_DISTANCE) {
-        const p = pointFromAngleDistance(MAX_TRAVEL_DISTANCE, theta_radians);
-
-        orcaXPos += p.x / distanceToMoveX;
-        orcaYPos += p.y / distanceToMoveY;
-      } else if (distance > SHORT_TRAVEL_DISTANCE) {
-        const p = pointFromAngleDistance(MIN_TRAVEL_DISTANCE, theta_radians);
-
-        orcaXPos += p.x / distanceToMoveX;
-        orcaYPos += p.y / distanceToMoveY;
-      } else {
-        orcaXPos += xDelta;
-        orcaYPos += yDelta;
-      }
-
-      mousePositions.push({ x: orcaXPos, y: orcaYPos });
+      mousePositions.push({ x: orcaPosition.x, y: orcaPosition.y });
       mousePositions.shift();
 
       ctx.fillStyle = "white";
