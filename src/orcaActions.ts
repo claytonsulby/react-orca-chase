@@ -1,11 +1,11 @@
 import {
-  LONG_TRAVEL_DISTANCE,
-  MAX_TRAVEL_DISTANCE,
-  MIN_TRAVEL_DISTANCE,
+  MAX_ACCEPTABLE_TRAVEL_DISTANCE,
+  MAX_LAYER_TRAVEL_DISTANCE,
+  MIN_ACCEPTABLE_TRAVEL_DISTANCE,
+  MIN_LAYER_TRAVEL_DISTANCE,
   ORCA_IMAGE_URLS,
   ORCA_X_DEACCELERATION,
   ORCA_Y_DEACCELERATION,
-  SHORT_TRAVEL_DISTANCE,
 } from "./constants";
 
 /** Loads all orca images and scales them. All the images will load and the function promise
@@ -70,9 +70,9 @@ export const calcNextOrcaPosition = (
     xDelta * xDelta + yDelta * yDelta
   );
 
-  if (distanceBetweenOrcaAndMouse > LONG_TRAVEL_DISTANCE) {
+  if (distanceBetweenOrcaAndMouse > MAX_ACCEPTABLE_TRAVEL_DISTANCE) {
     const { x, y } = pointFromAngleDistance(
-      MAX_TRAVEL_DISTANCE,
+      MAX_LAYER_TRAVEL_DISTANCE,
       radiansBetweenOrcaAndMouse
     );
 
@@ -80,9 +80,9 @@ export const calcNextOrcaPosition = (
       x: x / ORCA_X_DEACCELERATION,
       y: y / ORCA_Y_DEACCELERATION,
     };
-  } else if (radiansBetweenOrcaAndMouse > SHORT_TRAVEL_DISTANCE) {
+  } else if (radiansBetweenOrcaAndMouse > MIN_ACCEPTABLE_TRAVEL_DISTANCE) {
     const { x, y } = pointFromAngleDistance(
-      MIN_TRAVEL_DISTANCE,
+      MIN_LAYER_TRAVEL_DISTANCE,
       radiansBetweenOrcaAndMouse
     );
 
