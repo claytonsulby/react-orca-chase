@@ -134,15 +134,15 @@ function App() {
       // specified FPS_INTERVAL not being a multiple of RAF's interval (16.7ms)
       then = now - (elapsed % FPS_INTERVAL);
 
-      const orcaPosition = calcNextOrcaPosition(
+      const newOrcaPosition = calcNextOrcaPosition(
         { x: mouseX, y: mouseY },
         { x: orcaXPos, y: orcaYPos }
       );
 
-      orcaXPos += orcaPosition.x;
-      orcaYPos += orcaPosition.y;
+      orcaXPos += newOrcaPosition.x;
+      orcaYPos += newOrcaPosition.y;
 
-      mousePositions.push({ x: orcaPosition.x, y: orcaPosition.y });
+      mousePositions.push({ x: orcaXPos, y: orcaYPos });
       mousePositions.shift();
 
       ctx.fillStyle = "white";
