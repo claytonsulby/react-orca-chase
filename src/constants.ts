@@ -1,13 +1,19 @@
+// These variables control the speed of the orca
 export const ORCA_X_DEACCELERATION = 40;
 export const ORCA_Y_DEACCELERATION = 40;
 
+// These values control how far each layer can travel.
+// Higher values result in a more stretched orca
 export const MAX_LAYER_TRAVEL_DISTANCE = 300;
 export const MAX_LAYER_TRAVEL_DISTANCE_SMALL_SCREEN = 200;
 export const MIN_LAYER_TRAVEL_DISTANCE = 50;
 
+// These values change when different orca speeds occur
 export const MAX_ACCEPTABLE_TRAVEL_DISTANCE = 15;
 export const MIN_ACCEPTABLE_TRAVEL_DISTANCE = 1;
 
+// A higher FPS will result in smoother orca movement i.e. less
+// delay between orca layer movement
 export const FPS = 35;
 export const FPS_INTERVAL = 1000 / FPS;
 
