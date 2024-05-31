@@ -28,5 +28,5 @@
 #
 User-agent: *
 Allow: /
-Sitemap: https://orcachase.com/sitemap.xml
-Host: https://orcachase.com
+Sitemap: https://whalefollowmouse.com/sitemap.xml
+Host: https://whalefollowmouse.com
