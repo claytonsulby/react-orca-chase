@@ -61,9 +61,10 @@ function App() {
     setupMouseAndOcraPositions();
     setMaxOrcaTravelDistance();
 
-    window.addEventListener("keydown", handleKeyDown, false);
     canvas.current.addEventListener("mousemove", setMousePosition, false);
     canvas.current.addEventListener("touchmove", setTouchPosition, false);
+
+    window.addEventListener("keydown", handleKeyDown, false);
     window.addEventListener("scroll", updatePosition, false);
     window.addEventListener("resize", updatePosition, false);
 
@@ -78,35 +79,6 @@ function App() {
         alert("Failed to load orca :(\nPlease reload the site!");
       });
   }, []);
-
-  const handleKeyDown = (event: KeyboardEvent) => {
-    const upKeys = ["KeyW", "ArrowUp"];
-    const downKeys = ["KeyS", "ArrowDown"];
-    const leftKeys = ["KeyA", "ArrowLeft"];
-    const rightKeys = ["KeyD", "ArrowRight"];
-
-    const key = event.code;
-
-    if (upKeys.includes(key)) {
-      mouseY = 0 + BORDER_WIDTH * 2;
-      mouseX = orcaXPos;
-    }
-
-    if (downKeys.includes(key)) {
-      mouseY = canvasSize().y - BORDER_WIDTH * 2;
-      mouseX = orcaXPos;
-    }
-
-    if (leftKeys.includes(key)) {
-      mouseX = 0 + BORDER_WIDTH * 2;
-      mouseY = orcaYPos;
-    }
-
-    if (rightKeys.includes(key)) {
-      mouseX = canvasSize().x - BORDER_WIDTH * 2;
-      mouseY = orcaYPos;
-    }
-  };
 
   const calcOrcaScale = (): number => {
     if (
@@ -146,6 +118,35 @@ function App() {
     mouseY = sizeHeight / 2;
     orcaXPos = sizeWidth / 2;
     orcaYPos = sizeHeight / 2;
+  };
+
+  const handleKeyDown = (event: KeyboardEvent) => {
+    const upKeys = ["KeyW", "ArrowUp"];
+    const downKeys = ["KeyS", "ArrowDown"];
+    const leftKeys = ["KeyA", "ArrowLeft"];
+    const rightKeys = ["KeyD", "ArrowRight"];
+
+    const key = event.code;
+
+    if (upKeys.includes(key)) {
+      mouseY = 0 + BORDER_WIDTH * 2;
+      mouseX = orcaXPos;
+    }
+
+    if (downKeys.includes(key)) {
+      mouseY = canvasSize().y - BORDER_WIDTH * 2;
+      mouseX = orcaXPos;
+    }
+
+    if (leftKeys.includes(key)) {
+      mouseX = 0 + BORDER_WIDTH * 2;
+      mouseY = orcaYPos;
+    }
+
+    if (rightKeys.includes(key)) {
+      mouseX = canvasSize().x - BORDER_WIDTH * 2;
+      mouseY = orcaYPos;
+    }
   };
 
   const updatePosition = () => {
