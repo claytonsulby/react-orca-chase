@@ -25,16 +25,18 @@ function App() {
   const canvas = useRef<HTMLCanvasElement>(null);
   const canvasPosition = { x: 0, y: 0 };
 
-  const mousePositions: Point[] = [...Array(44).keys()].map(() => {
-    return { x: 0, y: 0 };
-  });
+  const orcas: Orca[] = [{
+    layerPositions: [...Array(44).keys()].map(() => {
+      return { x: 0, y: 0 };
+    }),
+    orca: { x: 0, y: 0 },
+    mouse: { x: 0, y: 0}
+  }];
 
   let orcaLayers: OrcaLayer[] = [];
 
   let mouseX = 0;
   let mouseY = 0;
-  let orcaXPos = 0;
-  let orcaYPos = 0;
 
   let maxLayerTravelDistance = MAX_LAYER_TRAVEL_DISTANCE;
 
@@ -112,12 +114,15 @@ function App() {
     const sizeHeight = canvasSize().y;
 
     // Start by rendering the orca in the middle of the screen
-    mousePositions.fill({ x: sizeWidth / 2, y: sizeHeight / 2 });
+    orcas[0].layerPositions.fill({ x: sizeWidth / 2, y: sizeHeight / 2 });
+    orcas[0].orca.x = sizeWidth / 2;
+    orcas[0].orca.y = sizeHeight / 2;
+
+    orcas[0].mouse.x = sizeWidth / 2;
+    orcas[0].mouse.y = sizeHeight / 2;
 
     mouseX = sizeWidth / 2;
     mouseY = sizeHeight / 2;
-    orcaXPos = sizeWidth / 2;
-    orcaYPos = sizeHeight / 2;
   };
 
   const handleKeyDown = (event: KeyboardEvent) => {
@@ -130,22 +135,22 @@ function App() {
 
     if (upKeys.includes(key)) {
       mouseY = 0 + BORDER_WIDTH * 2;
-      mouseX = orcaXPos;
+      // mouseX = orcaXPos;
     }
 
     if (downKeys.includes(key)) {
       mouseY = canvasSize().y - BORDER_WIDTH * 2;
-      mouseX = orcaXPos;
+      // mouseX = orcaXPos;
     }
 
     if (leftKeys.includes(key)) {
       mouseX = 0 + BORDER_WIDTH * 2;
-      mouseY = orcaYPos;
+      // mouseY = orcaYPos;
     }
 
     if (rightKeys.includes(key)) {
       mouseX = canvasSize().x - BORDER_WIDTH * 2;
-      mouseY = orcaYPos;
+      // mouseY = orcaYPos;
     }
   };
 
@@ -164,6 +169,9 @@ function App() {
   const setMousePosition = (event: MouseEvent) => {
     mouseX = event.clientX - canvasPosition.x;
     mouseY = event.clientY - canvasPosition.y;
+
+    orcas[0].mouse.x = event.clientX - canvasPosition.x;
+    orcas[0].mouse.y = event.clientY - canvasPosition.y;
   };
 
   const setTouchPosition = (event: TouchEvent) => {
@@ -181,17 +189,23 @@ function App() {
       // specified FPS_INTERVAL not being a multiple of RAF's interval (16.7ms)
       then = now - (elapsed % FPS_INTERVAL);
 
-      const newOrcaPosition = calcNextOrcaPosition(
-        { x: mouseX, y: mouseY },
-        { x: orcaXPos, y: orcaYPos },
-        maxLayerTravelDistance
-      );
+      orcas.forEach((orca, index) => {
+        const newOrcaPosition = calcNextOrcaPosition(
+          { x: orca.mouse.x, y: orca.mouse.y },
+          { x: orca.orca.x, y: orca.orca.y },
+          maxLayerTravelDistance
+        );
 
-      orcaXPos += newOrcaPosition.x;
-      orcaYPos += newOrcaPosition.y;
+        orcas[index].orca.x += newOrcaPosition.x;
+        orcas[index].orca.y += newOrcaPosition.y;
 
-      mousePositions.push({ x: orcaXPos, y: orcaYPos });
-      mousePositions.shift();
+        orca.layerPositions.push({
+          x: orcas[index].orca.x,
+          y: orcas[index].orca.y
+        });
+
+        orca.layerPositions.shift();
+      });
 
       ctx.fillStyle = "white";
       ctx.fillRect(0, 0, canvas.current!.width, canvas.current!.height);
@@ -203,17 +217,19 @@ function App() {
   }
 
   const renderOrca = (ctx: CanvasRenderingContext2D) => {
-    orcaLayers.forEach((layer, index) => {
-      const imageWidth = layer.img.width;
-      const imageHeight = layer.img.height;
+    orcas.forEach(orca => {
+      orca.layerPositions.forEach((position, index) => {
+        const imageWidth = orcaLayers[index].img.width;
+        const imageHeight = orcaLayers[index].img.height;
 
-      ctx.drawImage(
-        layer.img,
-        mousePositions[index].x - imageWidth / ORCA_X_MIDDLE,
-        mousePositions[index].y - imageHeight / ORCA_Y_MIDDLE,
-        imageWidth,
-        imageHeight
-      );
+        ctx.drawImage(
+          orcaLayers[index].img,
+          position.x - imageWidth / ORCA_X_MIDDLE,
+          position.y - imageHeight / ORCA_Y_MIDDLE,
+          imageWidth,
+          imageHeight
+        );
+      })
     });
   };
 
