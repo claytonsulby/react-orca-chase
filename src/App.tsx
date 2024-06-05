@@ -23,19 +23,25 @@ import "./App.css";
 
 function App() {
   const canvas = useRef<HTMLCanvasElement>(null);
-  const canvasPosition = { x: 0, y: 0 };
+  const canvasPosition: Point = { x: 0, y: 0 };
+
+  const fillLayerPositions = (pos: Point): Point[] => {
+    return [...Array(44).keys()].map(() => {
+      return pos;
+    })
+  };
 
   const orcas: Orca[] = [{
-    layerPositions: [...Array(44).keys()].map(() => {
-      return { x: 0, y: 0 };
-    }),
+    layerPositions: fillLayerPositions({ x: 0, y: 0}),
     orca: { x: 0, y: 0 },
-    mouse: { x: 0, y: 0}
+    mouseOffset: { x: 0, y: 0}
   }];
 
   let orcaLayers: OrcaLayer[] = [];
   let maxLayerTravelDistance = MAX_LAYER_TRAVEL_DISTANCE;
   let then = Date.now();
+  let mouseX = 0;
+  let mouseY = 0;
 
   useEffect(() => {
     if (!canvas.current) {
@@ -113,8 +119,30 @@ function App() {
     orcas[0].orca.x = sizeWidth / 2;
     orcas[0].orca.y = sizeHeight / 2;
 
-    orcas[0].mouse.x = sizeWidth / 2;
-    orcas[0].mouse.y = sizeHeight / 2;
+    mouseX = sizeWidth / 2;
+    mouseY = sizeHeight / 2;
+  };
+
+  // return Math.random() * (max - min) + min;
+  const calcRandomMousePosition = (): Point => {
+    const newMouseX = Math.random() * (canvas!.current!.width - 0) + 0;
+    const newMouseY = Math.random() * (canvas!.current!.height - 0) + 0;
+
+    return {
+      x: newMouseX,
+      y: newMouseY
+     }
+  }
+
+  const createNewOrca = () => {
+    const newMousePosition: Point = calcRandomMousePosition();
+    const newOrca: Orca = {
+      layerPositions: fillLayerPositions({ x:  newMousePosition.x, y: newMousePosition.y}),
+      orca: { x: newMousePosition.x, y: newMousePosition.y },
+      mouseOffset: { x: mouseX - newMousePosition.x, y: mouseY - newMousePosition.y }
+    }
+
+    orcas.push(newOrca);
   };
 
   const handleKeyDown = (event: KeyboardEvent) => {
@@ -122,8 +150,13 @@ function App() {
     const downKeys = ["KeyS", "ArrowDown"];
     const leftKeys = ["KeyA", "ArrowLeft"];
     const rightKeys = ["KeyD", "ArrowRight"];
+    const spaceKeys = ["Space"];
 
     const key = event.code;
+
+    if (spaceKeys.includes(key)) {
+      createNewOrca();
+    }
 
     if (upKeys.includes(key)) {
       // mouseY = 0 + BORDER_WIDTH * 2;
@@ -159,13 +192,13 @@ function App() {
   };
 
   const setMousePosition = (event: MouseEvent) => {
-    orcas[0].mouse.x = event.clientX - canvasPosition.x;
-    orcas[0].mouse.y = event.clientY - canvasPosition.y;
+    mouseX = event.clientX - canvasPosition.x;
+    mouseY = event.clientY - canvasPosition.y;
   };
 
   const setTouchPosition = (event: TouchEvent) => {
-    orcas[0].mouse.x = event.targetTouches[0].clientX - canvasPosition.x;
-    orcas[0].mouse.y = event.targetTouches[0].clientY - canvasPosition.y;
+    mouseX = event.targetTouches[0].clientX - canvasPosition.x;
+    mouseY = event.targetTouches[0].clientY - canvasPosition.y;
   };
 
   function animate(ctx: CanvasRenderingContext2D) {
@@ -180,7 +213,7 @@ function App() {
 
       orcas.forEach((orca, index) => {
         const newOrcaPosition = calcNextOrcaPosition(
-          { x: orca.mouse.x, y: orca.mouse.y },
+          { x: mouseX - orca.mouseOffset.x, y: mouseY - orca.mouseOffset.y },
           { x: orca.orca.x, y: orca.orca.y },
           maxLayerTravelDistance
         );
