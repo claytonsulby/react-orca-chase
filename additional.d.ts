@@ -14,6 +14,12 @@ declare global {
     id: number;
   }
 
+  interface Orca {
+    layerPositions: Point[],
+    orca: Point,
+    mouse: Point
+  }
+
   interface ImportMetaEnv extends Readonly<Record<string, string>> {
     readonly VITE_UMAMI_WEBSITE_ID: string;
     readonly VITE_UMAMI_WEBSITE_URL: string;
