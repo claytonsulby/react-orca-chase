@@ -34,12 +34,7 @@ function App() {
   }];
 
   let orcaLayers: OrcaLayer[] = [];
-
-  let mouseX = 0;
-  let mouseY = 0;
-
   let maxLayerTravelDistance = MAX_LAYER_TRAVEL_DISTANCE;
-
   let then = Date.now();
 
   useEffect(() => {
@@ -120,9 +115,6 @@ function App() {
 
     orcas[0].mouse.x = sizeWidth / 2;
     orcas[0].mouse.y = sizeHeight / 2;
-
-    mouseX = sizeWidth / 2;
-    mouseY = sizeHeight / 2;
   };
 
   const handleKeyDown = (event: KeyboardEvent) => {
@@ -134,22 +126,22 @@ function App() {
     const key = event.code;
 
     if (upKeys.includes(key)) {
-      mouseY = 0 + BORDER_WIDTH * 2;
+      // mouseY = 0 + BORDER_WIDTH * 2;
       // mouseX = orcaXPos;
     }
 
     if (downKeys.includes(key)) {
-      mouseY = canvasSize().y - BORDER_WIDTH * 2;
+      // mouseY = canvasSize().y - BORDER_WIDTH * 2;
       // mouseX = orcaXPos;
     }
 
     if (leftKeys.includes(key)) {
-      mouseX = 0 + BORDER_WIDTH * 2;
+      // mouseX = 0 + BORDER_WIDTH * 2;
       // mouseY = orcaYPos;
     }
 
     if (rightKeys.includes(key)) {
-      mouseX = canvasSize().x - BORDER_WIDTH * 2;
+      // mouseX = canvasSize().x - BORDER_WIDTH * 2;
       // mouseY = orcaYPos;
     }
   };
@@ -167,16 +159,13 @@ function App() {
   };
 
   const setMousePosition = (event: MouseEvent) => {
-    mouseX = event.clientX - canvasPosition.x;
-    mouseY = event.clientY - canvasPosition.y;
-
     orcas[0].mouse.x = event.clientX - canvasPosition.x;
     orcas[0].mouse.y = event.clientY - canvasPosition.y;
   };
 
   const setTouchPosition = (event: TouchEvent) => {
-    mouseX = event.targetTouches[0].clientX - canvasPosition.x;
-    mouseY = event.targetTouches[0].clientY - canvasPosition.y;
+    orcas[0].mouse.x = event.targetTouches[0].clientX - canvasPosition.x;
+    orcas[0].mouse.y = event.targetTouches[0].clientY - canvasPosition.y;
   };
 
   function animate(ctx: CanvasRenderingContext2D) {
