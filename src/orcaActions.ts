@@ -156,32 +156,3 @@ export const calcOrcaScale = (window: Window): number => {
 
   return DEFAULT_ORCA_SCALE;
 };
-
-/**
- * Normalises a point to a given width and height
- * @param point
- * @param width
- * @param height
- * @returns
- */
-export const normalisePosition = (point: Point, width: number, height: number): Point => {
-  const normalisedPoint: Point = { x: point.x, y: point.y };
-
-  if (normalisedPoint.x > width) {
-    normalisedPoint.x = width
-  }
-
-  if (normalisedPoint.x < 0) {
-    normalisedPoint.x = 0;
-  }
-
-  if (normalisedPoint.y > height) {
-    normalisedPoint.y = height;
-  }
-
-  if (normalisedPoint.y < 0) {
-    normalisedPoint.y = 0;
-  }
-
-  return normalisedPoint;
-}
