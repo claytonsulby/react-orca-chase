@@ -6,6 +6,7 @@ import {
   calcOrcaScale,
   fillLayerPositions,
   loadOrcaLayers,
+  normalisePosition,
   sortOrcaLayersTailFirst,
 } from "./orcaActions";
 import {
@@ -147,23 +148,32 @@ function App() {
     }
 
     if (upKeys.includes(key)) {
-      // mouseY = 0 + BORDER_WIDTH * 2;
-      // mouseX = orcaXPos;
+      mouseY = 0 + BORDER_WIDTH * 2;
+      mouseX = orcas[0].orca.x;
+      // orcas.forEach(orca => {
+      //   // orca.m.x
+      // })
     }
 
     if (downKeys.includes(key)) {
-      // mouseY = canvasSize().y - BORDER_WIDTH * 2;
+      mouseY = canvasSize().y - BORDER_WIDTH * 2;
       // mouseX = orcaXPos;
+      mouseX = orcas[0].orca.x;
+
     }
 
     if (leftKeys.includes(key)) {
-      // mouseX = 0 + BORDER_WIDTH * 2;
+      mouseX = 0 + BORDER_WIDTH * 2;
       // mouseY = orcaYPos;
+      mouseY = orcas[0].orca.y;
+
     }
 
     if (rightKeys.includes(key)) {
-      // mouseX = canvasSize().x - BORDER_WIDTH * 2;
+      mouseX = canvasSize().x - BORDER_WIDTH * 2;
       // mouseY = orcaYPos;
+      mouseY = orcas[0].orca.y;
+
     }
   };
 
@@ -232,10 +242,16 @@ function App() {
         const imageWidth = orcaLayers[index].img.width;
         const imageHeight = orcaLayers[index].img.height;
 
+        let normalisedOrcaPosition = normalisePosition(
+          position,
+          canvas.current!.width,
+          canvas.current!.height
+        );
+
         ctx.drawImage(
           orcaLayers[index].img,
-          position.x - imageWidth / ORCA_X_MIDDLE,
-          position.y - imageHeight / ORCA_Y_MIDDLE,
+          normalisedOrcaPosition.x - imageWidth / ORCA_X_MIDDLE,
+          normalisedOrcaPosition.y - imageHeight / ORCA_Y_MIDDLE,
           imageWidth,
           imageHeight
         );
