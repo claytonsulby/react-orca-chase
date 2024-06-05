@@ -6,7 +6,6 @@ import {
   calcOrcaScale,
   fillLayerPositions,
   loadOrcaLayers,
-  normalisePosition,
   sortOrcaLayersTailFirst,
 } from "./orcaActions";
 import {
@@ -155,19 +154,16 @@ function App() {
     if (downKeys.includes(key)) {
       mouseY = canvasSize().y - BORDER_WIDTH * 2;
       mouseX = orcas[0].orca.x;
-
     }
 
     if (leftKeys.includes(key)) {
       mouseX = 0 + BORDER_WIDTH * 2;
       mouseY = orcas[0].orca.y;
-
     }
 
     if (rightKeys.includes(key)) {
       mouseX = canvasSize().x - BORDER_WIDTH * 2;
       mouseY = orcas[0].orca.y;
-
     }
   };
 
