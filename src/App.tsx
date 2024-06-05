@@ -23,11 +23,13 @@ function App() {
   const canvas = useRef<HTMLCanvasElement>(null);
   const canvasPosition: Point = { x: 0, y: 0 };
 
-  const orcas: Orca[] = [{
-    layerPositions: fillLayerPositions({ x: 0, y: 0}),
-    orca: { x: 0, y: 0 },
-    mouseOffset: { x: 0, y: 0}
-  }];
+  const orcas: Orca[] = [
+    {
+      layerPositions: fillLayerPositions({ x: 0, y: 0 }),
+      orca: { x: 0, y: 0 },
+      mouseOffset: { x: 0, y: 0 },
+    },
+  ];
 
   let orcaLayers: OrcaLayer[] = [];
 
@@ -102,14 +104,14 @@ function App() {
 
   const calcRandomMousePosition = (): Point => {
     // return Math.random() * (max - min) + min;
-    const newMouseX = Math.random() * (canvas!.current!.width - 0) + 0;
-    const newMouseY = Math.random() * (canvas!.current!.height - 0) + 0;
+    const newMouseX = Math.random() * (canvas.current!.width - 0) + 0;
+    const newMouseY = Math.random() * (canvas.current!.height - 0) + 0;
 
     return {
       x: newMouseX,
-      y: newMouseY
-     }
-  }
+      y: newMouseY,
+    };
+  };
 
   /**
    * Creates a new orca which follows a randomly generated mouse position
@@ -117,10 +119,16 @@ function App() {
   const createNewOrca = () => {
     const newMousePosition: Point = calcRandomMousePosition();
     const newOrca: Orca = {
-      layerPositions: fillLayerPositions({ x:  newMousePosition.x, y: newMousePosition.y}),
+      layerPositions: fillLayerPositions({
+        x: newMousePosition.x,
+        y: newMousePosition.y,
+      }),
       orca: { x: newMousePosition.x, y: newMousePosition.y },
-      mouseOffset: { x: mouseX - newMousePosition.x, y: mouseY - newMousePosition.y }
-    }
+      mouseOffset: {
+        x: mouseX - newMousePosition.x,
+        y: mouseY - newMousePosition.y,
+      },
+    };
 
     orcas.push(newOrca);
   };
@@ -203,7 +211,7 @@ function App() {
 
         orca.layerPositions.push({
           x: orcas[index].orca.x,
-          y: orcas[index].orca.y
+          y: orcas[index].orca.y,
         });
 
         orca.layerPositions.shift();
@@ -219,7 +227,7 @@ function App() {
   }
 
   const renderOrca = (ctx: CanvasRenderingContext2D) => {
-    orcas.forEach(orca => {
+    orcas.forEach((orca) => {
       orca.layerPositions.forEach((position, index) => {
         const imageWidth = orcaLayers[index].img.width;
         const imageHeight = orcaLayers[index].img.height;
@@ -231,7 +239,7 @@ function App() {
           imageWidth,
           imageHeight
         );
-      })
+      });
     });
   };
 

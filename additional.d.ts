@@ -15,9 +15,9 @@ declare global {
   }
 
   interface Orca {
-    layerPositions: Point[],
-    orca: Point,
-    mouseOffset: Point
+    layerPositions: Point[];
+    orca: Point;
+    mouseOffset: Point;
   }
 
   interface ImportMetaEnv extends Readonly<Record<string, string>> {

@@ -132,7 +132,7 @@ export const pointFromAngleDistance = (
 export const fillLayerPositions = (pos: Point): Point[] => {
   return [...Array(ORCA_LAYERS).keys()].map(() => {
     return pos;
-  })
+  });
 };
 
 /**
@@ -142,8 +142,7 @@ export const fillLayerPositions = (pos: Point): Point[] => {
  */
 export const calcOrcaScale = (window: Window): number => {
   if (
-    window.matchMedia(`screen and (max-width: ${SMALL_SCREEN_WIDTH}px)`)
-      .matches
+    window.matchMedia(`screen and (max-width: ${SMALL_SCREEN_WIDTH}px)`).matches
   ) {
     return SMALL_ORCA_SCALE;
   }
