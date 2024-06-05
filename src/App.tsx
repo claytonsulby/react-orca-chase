@@ -3,6 +3,8 @@ import { Helmet } from "react-helmet";
 
 import {
   calcNextOrcaPosition,
+  calcOrcaScale,
+  fillLayerPositions,
   loadOrcaLayers,
   sortOrcaLayersTailFirst,
 } from "./orcaActions";
@@ -14,6 +16,7 @@ import {
   MAX_LAYER_TRAVEL_DISTANCE_SMALL_SCREEN,
   MEDIUM_ORCA_SCALE,
   MEDIUM_SCREEN_WIDTH,
+  ORCA_LAYERS,
   ORCA_X_MIDDLE,
   ORCA_Y_MIDDLE,
   SMALL_ORCA_SCALE,
@@ -25,12 +28,6 @@ function App() {
   const canvas = useRef<HTMLCanvasElement>(null);
   const canvasPosition: Point = { x: 0, y: 0 };
 
-  const fillLayerPositions = (pos: Point): Point[] => {
-    return [...Array(44).keys()].map(() => {
-      return pos;
-    })
-  };
-
   const orcas: Orca[] = [{
     layerPositions: fillLayerPositions({ x: 0, y: 0}),
     orca: { x: 0, y: 0 },
@@ -38,8 +35,11 @@ function App() {
   }];
 
   let orcaLayers: OrcaLayer[] = [];
+
   let maxLayerTravelDistance = MAX_LAYER_TRAVEL_DISTANCE;
-  let then = Date.now();
+
+  let previousRenderTime = Date.now();
+
   let mouseX = 0;
   let mouseY = 0;
 
@@ -71,7 +71,7 @@ function App() {
     window.addEventListener("scroll", updatePosition, false);
     window.addEventListener("resize", updatePosition, false);
 
-    loadOrcaLayers(calcOrcaScale())
+    loadOrcaLayers(calcOrcaScale(window))
       .then((layers) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
         orcaLayers = layers;
@@ -82,24 +82,6 @@ function App() {
         alert("Failed to load orca :(\nPlease reload the site!");
       });
   }, []);
-
-  const calcOrcaScale = (): number => {
-    if (
-      window.matchMedia(`screen and (max-width: ${SMALL_SCREEN_WIDTH}px)`)
-        .matches
-    ) {
-      return SMALL_ORCA_SCALE;
-    }
-
-    if (
-      window.matchMedia(`screen and (max-width: ${MEDIUM_SCREEN_WIDTH}px)`)
-        .matches
-    ) {
-      return MEDIUM_ORCA_SCALE;
-    }
-
-    return DEFAULT_ORCA_SCALE;
-  };
 
   const setMaxOrcaTravelDistance = () => {
     if (
@@ -114,7 +96,7 @@ function App() {
     const sizeWidth = canvasSize().x;
     const sizeHeight = canvasSize().y;
 
-    // Start by rendering the orca in the middle of the screen
+    // Start by rendering the first orca in the middle of the screen
     orcas[0].layerPositions.fill({ x: sizeWidth / 2, y: sizeHeight / 2 });
     orcas[0].orca.x = sizeWidth / 2;
     orcas[0].orca.y = sizeHeight / 2;
@@ -123,8 +105,8 @@ function App() {
     mouseY = sizeHeight / 2;
   };
 
-  // return Math.random() * (max - min) + min;
   const calcRandomMousePosition = (): Point => {
+    // return Math.random() * (max - min) + min;
     const newMouseX = Math.random() * (canvas!.current!.width - 0) + 0;
     const newMouseY = Math.random() * (canvas!.current!.height - 0) + 0;
 
@@ -134,6 +116,9 @@ function App() {
      }
   }
 
+  /**
+   * Creates a new orca which follows a randomly generated mouse position
+   */
   const createNewOrca = () => {
     const newMousePosition: Point = calcRandomMousePosition();
     const newOrca: Orca = {
@@ -203,13 +188,13 @@ function App() {
 
   function animate(ctx: CanvasRenderingContext2D) {
     const now = Date.now();
-    const elapsed = now - then;
+    const elapsed = now - previousRenderTime;
 
     const timeToRender = elapsed > FPS_INTERVAL;
     if (timeToRender) {
       // Get ready for the next frame by setting then=now, but also adjust for the
       // specified FPS_INTERVAL not being a multiple of RAF's interval (16.7ms)
-      then = now - (elapsed % FPS_INTERVAL);
+      previousRenderTime = now - (elapsed % FPS_INTERVAL);
 
       orcas.forEach((orca, index) => {
         const newOrcaPosition = calcNextOrcaPosition(

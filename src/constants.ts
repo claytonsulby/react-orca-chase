@@ -32,6 +32,8 @@ export const ORCA_Y_MIDDLE = 1.7;
 // Canvas is rendered with a  2px border
 export const BORDER_WIDTH = 2;
 
-export const ORCA_IMAGE_URLS = [...Array(44).keys()]
+export const ORCA_LAYERS = 44;
+
+export const ORCA_IMAGE_URLS = [...Array(ORCA_LAYERS).keys()]
   .map((x) => ++x)
   .map((x) => "/orca/" + x + ".png");

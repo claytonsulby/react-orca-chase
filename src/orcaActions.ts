@@ -1,10 +1,16 @@
 import {
+  DEFAULT_ORCA_SCALE,
   MAX_ACCEPTABLE_TRAVEL_DISTANCE,
+  MEDIUM_ORCA_SCALE,
+  MEDIUM_SCREEN_WIDTH,
   MIN_ACCEPTABLE_TRAVEL_DISTANCE,
   MIN_LAYER_TRAVEL_DISTANCE,
   ORCA_IMAGE_URLS,
+  ORCA_LAYERS,
   ORCA_X_DEACCELERATION,
   ORCA_Y_DEACCELERATION,
+  SMALL_ORCA_SCALE,
+  SMALL_SCREEN_WIDTH,
 } from "./constants";
 
 /** Loads all orca images and scales them. All the images will load and the function promise
@@ -115,4 +121,39 @@ export const pointFromAngleDistance = (
     x,
     y,
   };
+};
+
+/**
+ * Returns an array of ORCA_LAYERS length with points at
+ * a given position
+ * @param pos
+ * @returns
+ */
+export const fillLayerPositions = (pos: Point): Point[] => {
+  return [...Array(ORCA_LAYERS).keys()].map(() => {
+    return pos;
+  })
+};
+
+/**
+ * Calculates how much orcas should be scaled by given a window
+ * @param window
+ * @returns
+ */
+export const calcOrcaScale = (window: Window): number => {
+  if (
+    window.matchMedia(`screen and (max-width: ${SMALL_SCREEN_WIDTH}px)`)
+      .matches
+  ) {
+    return SMALL_ORCA_SCALE;
+  }
+
+  if (
+    window.matchMedia(`screen and (max-width: ${MEDIUM_SCREEN_WIDTH}px)`)
+      .matches
+  ) {
+    return MEDIUM_ORCA_SCALE;
+  }
+
+  return DEFAULT_ORCA_SCALE;
 };
