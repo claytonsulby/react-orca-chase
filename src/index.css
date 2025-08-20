@@ -1,4 +1,7 @@
-/* Theme variables with next-themes (.light / .dark on <html> or <body>) */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   --bg: #ffffff;
   --fg: #000000;

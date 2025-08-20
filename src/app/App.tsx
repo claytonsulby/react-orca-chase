@@ -33,7 +33,8 @@ function App() {
 
   let maxLayerTravelDistance = MAX_LAYER_TRAVEL_DISTANCE;
 
-  let previousRenderTime = Date.now();
+  let previousTime = performance.now();
+  let accumulatorMs = 0;
 
   let mouseX = 0;
   let mouseY = 0;
@@ -188,15 +189,15 @@ function App() {
   };
 
   function animate(ctx: CanvasRenderingContext2D) {
-    const now = Date.now();
-    const elapsed = now - previousRenderTime;
+    const now = performance.now();
+  const delta = now - previousTime;
+    previousTime = now;
+    accumulatorMs += delta;
 
-    const timeToRender = elapsed > FPS_INTERVAL;
-    if (timeToRender) {
-      // Get ready for the next frame by setting then=now, but also adjust for the
-      // specified FPS_INTERVAL not being a multiple of RAF's interval (16.7ms)
-      previousRenderTime = now - (elapsed % FPS_INTERVAL);
+    let didUpdate = false;
 
+    while (accumulatorMs >= FPS_INTERVAL) {
+      // fixed update step
       orcas.forEach((orca, index) => {
         const newOrcaPosition = calcNextOrcaPosition(
           { x: mouseX - orca.mouseOffset.x, y: mouseY - orca.mouseOffset.y },
@@ -215,15 +216,20 @@ function App() {
         orca.layerPositions.shift();
       });
 
+      accumulatorMs -= FPS_INTERVAL;
+      didUpdate = true;
+    }
+
+    if (didUpdate) {
       // Respect theme background via CSS variable set on body/html by next-themes
       const bg =
         getComputedStyle(document.body).getPropertyValue("--bg").trim() ||
         "white";
       ctx.fillStyle = bg;
       ctx.fillRect(0, 0, canvas.current!.width, canvas.current!.height);
-    }
 
-    renderOrca(ctx);
+      renderOrca(ctx);
+    }
 
     requestAnimationFrame(() => animate(ctx));
   }
@@ -231,11 +237,12 @@ function App() {
   const renderOrca = (ctx: CanvasRenderingContext2D) => {
     orcas.forEach((orca) => {
       orca.layerPositions.forEach((position, index) => {
-        const imageWidth = orcaLayers[index].img.width;
-        const imageHeight = orcaLayers[index].img.height;
+        const source = orcaLayers[index].img;
+        const imageWidth = source.width;
+        const imageHeight = source.height;
 
         ctx.drawImage(
-          orcaLayers[index].img,
+          source,
           position.x - imageWidth / ORCA_X_MIDDLE,
           position.y - imageHeight / ORCA_Y_MIDDLE,
           imageWidth,

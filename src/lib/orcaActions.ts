@@ -11,6 +11,7 @@ import {
   ORCA_Y_DEACCELERATION,
   SMALL_ORCA_SCALE,
   SMALL_SCREEN_WIDTH,
+  ORCA_REFERENCE_HEAD_WIDTH,
 } from "./constants";
 
 /** Loads all orca images and scales them. All the images will load and the function promise
@@ -20,28 +21,64 @@ import {
  * @returns
  */
 export const loadOrcaLayers = (imageScale: number): Promise<OrcaLayer[]> => {
-  const orcaImages = ORCA_IMAGE_URLS.map(() => new Image());
-
-  const loadingPromises: Promise<OrcaLayer>[] = orcaImages.map(
-    (image: HTMLImageElement, index: number) => {
-      return new Promise<OrcaLayer>((res, rej) => {
-        image.onload = () => {
-          image.width = image.naturalWidth * imageScale;
-          image.height = image.naturalHeight * imageScale;
-
-          res({ img: image, id: index });
+  // Load images and pre-scale once into ImageBitmaps to avoid per-frame resampling.
+  const rawPromises: Promise<{ img: HTMLImageElement; id: number }>[] = ORCA_IMAGE_URLS.map(
+    (src: string, index: number) =>
+      new Promise((resolve, reject) => {
+        const img = new Image();
+        img.decoding = "async";
+        img.loading = "eager"; // we want them ready for the first render
+        img.crossOrigin = "anonymous"; // safe default if hosted on same origin
+  img.onload = () => {
+          resolve({ img, id: index });
         };
-        image.onerror = () =>
-          rej(new Error(`Failed to load orca layer index ${index}`));
-      });
-    }
+        img.onerror = () => reject(new Error(`Failed to load orca layer index ${index}`));
+        img.src = src;
+      })
   );
 
-  orcaImages.forEach((image: HTMLImageElement, index: number) => {
-    image.src = ORCA_IMAGE_URLS[index];
-  });
+  // After all images are loaded, compute a normalization factor so the head width matches reference.
+  return Promise.all(rawPromises).then(async (rawLayers) => {
+    // Find head (id 0 corresponds to 1.webp in your scheme)
+    const head = rawLayers.find((l) => l.id === 0)!;
+    const desiredHeadWidth = ORCA_REFERENCE_HEAD_WIDTH * imageScale;
+    const normalization = desiredHeadWidth / head.img.naturalWidth;
 
-  return Promise.all(loadingPromises);
+    const scaleTo = (source: HTMLImageElement) => {
+      const targetWidth = Math.max(1, Math.floor(source.naturalWidth * normalization));
+      const targetHeight = Math.max(1, Math.floor(source.naturalHeight * normalization));
+
+      const doBitmap = async (): Promise<CanvasImageSource & { width: number; height: number }> => {
+        if ("createImageBitmap" in window) {
+          const opts: ImageBitmapOptions = {
+            resizeWidth: targetWidth,
+            resizeHeight: targetHeight,
+            resizeQuality: "high",
+          };
+          const bmp = await createImageBitmap(source, opts);
+          // ImageBitmap already has width/height attributes
+          return bmp as unknown as CanvasImageSource & { width: number; height: number };
+        }
+        const off = document.createElement("canvas");
+        off.width = targetWidth;
+        off.height = targetHeight;
+        const c2d = off.getContext("2d");
+        if (!c2d) throw new Error("Failed to get 2D context for pre-scale");
+        c2d.imageSmoothingEnabled = true;
+        c2d.imageSmoothingQuality = "high";
+        c2d.drawImage(source, 0, 0, targetWidth, targetHeight);
+        return off as unknown as CanvasImageSource & { width: number; height: number };
+      };
+
+      return doBitmap();
+    };
+
+    const scaled = await Promise.all(
+      rawLayers.map(async (l) => ({ id: l.id, img: await scaleTo(l.img) }))
+    );
+
+    return scaled as OrcaLayer[];
+  });
 };
 
 /**

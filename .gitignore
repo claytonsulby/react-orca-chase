@@ -144,3 +144,7 @@ dist
 *.njsproj
 *.sln
 *.sw?
+
+# Custom
+./public/publicignore
+./public/publicignore/*

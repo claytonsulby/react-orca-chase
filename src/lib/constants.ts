@@ -36,4 +36,8 @@ export const ORCA_LAYERS = 44;
 
 export const ORCA_IMAGE_URLS = [...Array(ORCA_LAYERS).keys()]
   .map((x) => ++x)
-  .map((x) => "/orca/" + x + ".png");
+  .map((x) => "/orca/" + x + ".webp");
+
+// Baseline visual width (in CSS px) for the head layer (1.webp) at DEFAULT_ORCA_SCALE.
+// This keeps the on-screen orca size stable regardless of the underlying asset resolution.
+export const ORCA_REFERENCE_HEAD_WIDTH = 580;
