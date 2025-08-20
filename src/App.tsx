@@ -256,15 +256,6 @@ function App() {
       <canvas id="canvas" ref={canvas}>
         Canvas not supported. Please use a more modern different browser.
       </canvas>
-
-      <div className="message">
-        <james-watt-calling-card
-          modal-bg-color="#FFFFFF"
-          modal-border-color="#ff0000"
-        >
-          <p>Soooo mesmerizing!</p>
-        </james-watt-calling-card>
-      </div>
     </>
   );
 }
