@@ -31,7 +31,8 @@ export const loadOrcaLayers = (imageScale: number): Promise<OrcaLayer[]> => {
 
           res({ img: image, id: index });
         };
-        image.onerror = () => rej({ img: image, id: index });
+        image.onerror = () =>
+          rej(new Error(`Failed to load orca layer index ${index}`));
       });
     }
   );
