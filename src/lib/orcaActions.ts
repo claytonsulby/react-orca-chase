@@ -23,7 +23,7 @@ export const loadOrcaLayers = (imageScale: number): Promise<OrcaLayer[]> => {
   const orcaImages = ORCA_IMAGE_URLS.map(() => new Image());
 
   const loadingPromises: Promise<OrcaLayer>[] = orcaImages.map(
-    (image, index) => {
+    (image: HTMLImageElement, index: number) => {
       return new Promise<OrcaLayer>((res, rej) => {
         image.onload = () => {
           image.width = image.naturalWidth * imageScale;
@@ -36,7 +36,7 @@ export const loadOrcaLayers = (imageScale: number): Promise<OrcaLayer[]> => {
     }
   );
 
-  orcaImages.forEach((image, index) => {
+  orcaImages.forEach((image: HTMLImageElement, index: number) => {
     image.src = ORCA_IMAGE_URLS[index];
   });
 

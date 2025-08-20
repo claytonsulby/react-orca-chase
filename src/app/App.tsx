@@ -7,7 +7,7 @@ import {
   fillLayerPositions,
   loadOrcaLayers,
   sortOrcaLayersTailFirst,
-} from "./orcaActions";
+} from "../lib/orcaActions";
 import {
   BORDER_WIDTH,
   FPS_INTERVAL,
@@ -16,8 +16,7 @@ import {
   ORCA_X_MIDDLE,
   ORCA_Y_MIDDLE,
   SMALL_SCREEN_WIDTH,
-} from "./constants";
-import "./App.css";
+} from "../lib/constants";
 
 function App() {
   const canvas = useRef<HTMLCanvasElement>(null);
