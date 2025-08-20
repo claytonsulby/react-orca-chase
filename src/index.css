@@ -1,6 +1,12 @@
+/* Theme variables with next-themes (.light / .dark on <html> or <body>) */
 :root {
-  color: #000000;
-  background-color: #000000;
+  --bg: #ffffff;
+  --fg: #000000;
+}
+
+.dark {
+  --bg: #000000;
+  --fg: #ffffff;
 }
 
 body {
@@ -8,4 +14,6 @@ body {
   overflow: hidden;
   height: 100vh;
   width: 100vw;
+  background: var(--bg);
+  color: var(--fg);
 }

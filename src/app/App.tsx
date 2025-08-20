@@ -215,7 +215,11 @@ function App() {
         orca.layerPositions.shift();
       });
 
-      ctx.fillStyle = "white";
+      // Respect theme background via CSS variable set on body/html by next-themes
+      const bg =
+        getComputedStyle(document.body).getPropertyValue("--bg").trim() ||
+        "white";
+      ctx.fillStyle = bg;
       ctx.fillRect(0, 0, canvas.current!.width, canvas.current!.height);
     }
 
