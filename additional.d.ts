@@ -10,7 +10,7 @@ declare global {
   }
 
   interface OrcaLayer {
-  img: (CanvasImageSource & { width: number; height: number });
+    img: CanvasImageSource & { width: number; height: number };
     id: number;
   }
 

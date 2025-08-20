@@ -98,10 +98,10 @@ function App() {
 
     el.addEventListener("mousemove", setMousePosition, false);
     el.addEventListener("touchmove", setTouchPosition, false);
-  el.addEventListener("mouseenter", handlePointerEnter, false);
-  el.addEventListener("mouseleave", handlePointerLeave, false);
-  el.addEventListener("touchstart", handleTouchStart, false);
-  el.addEventListener("touchend", handleTouchEnd, false);
+    el.addEventListener("mouseenter", handlePointerEnter, false);
+    el.addEventListener("mouseleave", handlePointerLeave, false);
+    el.addEventListener("touchstart", handleTouchStart, false);
+    el.addEventListener("touchend", handleTouchEnd, false);
     el.addEventListener("click", handleClick, false);
 
     window.addEventListener("keydown", handleKeyDown, false);
@@ -123,10 +123,10 @@ function App() {
     return () => {
       el.removeEventListener("mousemove", setMousePosition, false);
       el.removeEventListener("touchmove", setTouchPosition, false);
-  el.removeEventListener("mouseenter", handlePointerEnter, false);
-  el.removeEventListener("mouseleave", handlePointerLeave, false);
-  el.removeEventListener("touchstart", handleTouchStart, false);
-  el.removeEventListener("touchend", handleTouchEnd, false);
+      el.removeEventListener("mouseenter", handlePointerEnter, false);
+      el.removeEventListener("mouseleave", handlePointerLeave, false);
+      el.removeEventListener("touchstart", handleTouchStart, false);
+      el.removeEventListener("touchend", handleTouchEnd, false);
       el.removeEventListener("click", handleClick, false);
       window.removeEventListener("keydown", handleKeyDown, false);
       window.removeEventListener("scroll", updatePosition, false);
@@ -305,13 +305,12 @@ function App() {
         orca.layerPositions.shift();
       });
 
-  accumulatorMs -= FPS_INTERVAL;
+      accumulatorMs -= FPS_INTERVAL;
       // Update cascading barrel roll timer
       if (isRolling) {
         const layers = orcaLayers.length || 0;
         const totalLayers = layers > 0 ? layers : 44;
-        const totalRollDuration =
-          ROLL_TOTAL_MS + (totalLayers - 1) * CASCADE_DELAY_PER_LAYER_MS;
+        const totalRollDuration = ROLL_TOTAL_MS + (totalLayers - 1) * CASCADE_DELAY_PER_LAYER_MS;
         rollClockMs += Math.min(FPS_INTERVAL, totalRollDuration - rollClockMs);
         if (rollClockMs >= totalRollDuration) {
           // End of cascade
@@ -319,8 +318,8 @@ function App() {
           rollClockMs = 0;
         }
       }
-  // Advance idle clock continually
-  idleClockMs = (idleClockMs + FPS_INTERVAL) % IDLE_PERIOD_MS;
+      // Advance idle clock continually
+      idleClockMs = (idleClockMs + FPS_INTERVAL) % IDLE_PERIOD_MS;
       didUpdate = true;
     }
 

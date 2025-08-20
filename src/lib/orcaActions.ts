@@ -29,7 +29,7 @@ export const loadOrcaLayers = (imageScale: number): Promise<OrcaLayer[]> => {
         img.decoding = "async";
         img.loading = "eager"; // we want them ready for the first render
         img.crossOrigin = "anonymous"; // safe default if hosted on same origin
-  img.onload = () => {
+        img.onload = () => {
           resolve({ img, id: index });
         };
         img.onerror = () => reject(new Error(`Failed to load orca layer index ${index}`));
@@ -110,25 +110,17 @@ export const calcNextOrcaPosition = (
   const yDelta = mousePosition.y - orcaPosition.y;
 
   const radiansBetweenOrcaAndMouse = Math.atan2(yDelta, xDelta);
-  const distanceBetweenOrcaAndMouse = Math.sqrt(
-    xDelta * xDelta + yDelta * yDelta
-  );
+  const distanceBetweenOrcaAndMouse = Math.sqrt(xDelta * xDelta + yDelta * yDelta);
 
   if (distanceBetweenOrcaAndMouse > MAX_ACCEPTABLE_TRAVEL_DISTANCE) {
-    const { x, y } = pointFromAngleDistance(
-      maxLayerTravelDistance,
-      radiansBetweenOrcaAndMouse
-    );
+    const { x, y } = pointFromAngleDistance(maxLayerTravelDistance, radiansBetweenOrcaAndMouse);
 
     return {
       x: x / ORCA_X_DEACCELERATION,
       y: y / ORCA_Y_DEACCELERATION,
     };
   } else if (radiansBetweenOrcaAndMouse > MIN_ACCEPTABLE_TRAVEL_DISTANCE) {
-    const { x, y } = pointFromAngleDistance(
-      MIN_LAYER_TRAVEL_DISTANCE,
-      radiansBetweenOrcaAndMouse
-    );
+    const { x, y } = pointFromAngleDistance(MIN_LAYER_TRAVEL_DISTANCE, radiansBetweenOrcaAndMouse);
 
     return {
       x: x / ORCA_X_DEACCELERATION,
@@ -148,10 +140,7 @@ export const calcNextOrcaPosition = (
  * @param radians
  * @returns
  */
-export const pointFromAngleDistance = (
-  distance: number,
-  radians: number
-): Point => {
+export const pointFromAngleDistance = (distance: number, radians: number): Point => {
   const x = distance * Math.cos(radians);
   const y = distance * Math.sin(radians);
 
@@ -179,16 +168,11 @@ export const fillLayerPositions = (pos: Point): Point[] => {
  * @returns
  */
 export const calcOrcaScale = (window: Window): number => {
-  if (
-    window.matchMedia(`screen and (max-width: ${SMALL_SCREEN_WIDTH}px)`).matches
-  ) {
+  if (window.matchMedia(`screen and (max-width: ${SMALL_SCREEN_WIDTH}px)`).matches) {
     return SMALL_ORCA_SCALE;
   }
 
-  if (
-    window.matchMedia(`screen and (max-width: ${MEDIUM_SCREEN_WIDTH}px)`)
-      .matches
-  ) {
+  if (window.matchMedia(`screen and (max-width: ${MEDIUM_SCREEN_WIDTH}px)`).matches) {
     return MEDIUM_ORCA_SCALE;
   }
 
