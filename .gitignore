@@ -148,3 +148,4 @@ dist
 # Custom
 ./public/publicignore
 ./public/publicignore/*
+.vercel
